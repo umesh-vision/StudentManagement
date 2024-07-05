@@ -2,6 +2,7 @@ import { Component} from 'react'
 import { onChange,validationForm} from '../../utils/util'
 import { login } from '../../Redux/Reducers/Auth/AuthReducers';
 import "../../styles/nav.css"
+import { getCookie } from '../../services/cookie';
 class Login extends Component<any,any>{  
   constructor(props:any) {
     super(props);
@@ -10,6 +11,16 @@ class Login extends Component<any,any>{
       password: {name :'password',value:'',required:true,error:''}
     }
   }
+  componentDidMount=(async()=>{
+    const role = await getCookie('role');
+    if (role !==undefined) {
+      if (role==='student') {
+        this.setState({ redirect: "/pages/student" });
+      }else{
+        this.setState({ redirect: "/pages/admin" });
+      }
+    }
+  });
 
   render() {     
     const{username,password}=this.state;
@@ -54,14 +65,14 @@ class Login extends Component<any,any>{
     );
   }
   
-  onChange=(e:any)=>{   debugger     
+  onChange=(e:any)=>{       
     const name=e.target.name;
     let value=e.target.value;
     onChange(this,name,value);
   }
 
   onLogin=(async(e:any)=>{    
-       e.preventDefault(); 
+    e.preventDefault(); 
     if(validationForm(this)){
       const{username,password}=this.state;    
       let model={
@@ -69,9 +80,13 @@ class Login extends Component<any,any>{
         password:password.value       
       }  
       if(await login(model)){
-        console.log("Successed")
+         window.location.reload();
       }       
     }
   })
 }
 export default Login;
+function useContext(AuthContext: any) {
+  throw new Error('Function not implemented.');
+}
+

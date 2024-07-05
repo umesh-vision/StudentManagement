@@ -23,7 +23,7 @@ export const login=(async(model:any)=>{
         status=true;
       } 
     })
-    .catch((err) => {  debugger          
+    .catch((err) => {            
        console.log(err)
        status=false;
     }); 
