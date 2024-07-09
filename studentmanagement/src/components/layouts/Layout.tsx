@@ -1,9 +1,11 @@
 import { Fragment,Component} from 'react'
 import Navigation from './Navigation';
+import withAuth from '../../context/AuthContextExtenstion';
 
 export interface LayoutProps{
   navigation: any
 };
+
 class Layout extends Component<LayoutProps> {
   render(){
     return (
@@ -14,4 +16,5 @@ class Layout extends Component<LayoutProps> {
     )
   }
 }
-export default Layout;
+export default withAuth(Layout);
+

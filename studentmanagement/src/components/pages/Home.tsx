@@ -1,8 +1,10 @@
 import { Component} from 'react'
 import withAuth from '../../context/AuthContextExtenstion';
-class Admin extends Component<any,any>{  
+
+class Home extends Component<any,any>{  
     render(){
-        return("Admin")
+        return("Home")
     }
 }
-export default withAuth(Admin);
+
+export default withAuth(Home);

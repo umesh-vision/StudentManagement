@@ -1,29 +1,30 @@
 import { Component} from 'react'
 import { onChange,validationForm} from '../../utils/util'
-import { login } from '../../Redux/Reducers/Auth/AuthReducers';
 import "../../styles/nav.css"
-import { getCookie } from '../../services/cookie';
-class Login extends Component<any,any>{  
-  constructor(props:any) {
+import { AuthReducersLogin } from '../../Redux/Reducers/Auth/AuthReducersLogin';
+import withAuth from '../../context/AuthContextExtenstion';
+import withNavigate from '../layouts/NavigationExtenstion';
+import { AuthContextProps } from '../../services/context';
+
+type LoginProps = { auth:AuthContextProps,  navigate: (path: string) => void;};
+interface IContext{
+  username:any,
+  password:any
+}
+ 
+class Login extends Component<LoginProps,IContext>{ 
+  constructor(props:LoginProps) {
     super(props);
     this.state = {    
       username: {name :'username',value:'',required:true,error:''},
       password: {name :'password',value:'',required:true,error:''}
-    }
+    }   
   }
-  componentDidMount=(async()=>{
-    const role = await getCookie('role');
-    if (role !==undefined) {
-      if (role==='student') {
-        this.setState({ redirect: "/pages/student" });
-      }else{
-        this.setState({ redirect: "/pages/admin" });
-      }
-    }
-  });
-
-  render() {     
-    const{username,password}=this.state;
+  componentDidMount() {
+    this.props.auth.logout();
+  }
+  render() {  
+    const { username, password} = this.state;
     return(  
       <div className='container'>
         <div className='row'>
@@ -74,19 +75,19 @@ class Login extends Component<any,any>{
   onLogin=(async(e:any)=>{    
     e.preventDefault(); 
     if(validationForm(this)){
-      const{username,password}=this.state;    
+      const{username,password}=this.state;   
       let model={
         userName:username.value,
         password:password.value       
-      }  
-      if(await login(model)){
-         window.location.reload();
-      }       
+      }        
+      let dto=await AuthReducersLogin(model);
+      if(dto.status){
+        this.props.auth.login(username, dto.role,dto.token);
+        dto.role==='admin'?this.props.navigate('/pages/admin'):this.props.navigate('/pages/student');  
+      }     
     }
   })
 }
-export default Login;
-function useContext(AuthContext: any) {
-  throw new Error('Function not implemented.');
-}
+
+export default withAuth(withNavigate(Login));
 

@@ -6,7 +6,7 @@ export const setError=(context:any,name:string,error:string,callback?:any)=>{
     context.setState({[name]:{...context.state.name,name:name,error:error}},callback && callback);
 }
 
-export const validationForm=(context:any)=>{    debugger
+export const validationForm=(context:any)=>{ 
     const cs=JSON.parse(JSON.stringify(context.state));
     let status=true;
     for(let key in cs){

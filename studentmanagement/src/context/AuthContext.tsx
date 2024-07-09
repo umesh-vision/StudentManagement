@@ -1,40 +1,45 @@
-// context/todoContext.tsx
-import React from 'react';
-import { IAuthDetail ,IAuthContextType} from '../services/context';
-import { deleteCookie, getCookie, setCookie } from '../services/cookie';
+import React, { Component, createContext, ReactNode } from 'react';
+import { AuthContextProps, AuthState, User } from '../services/context';
 
-export const AuthContext = React.createContext<IAuthContextType | null>(null);
+// Create the AuthContext
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const getToken = (async() => {
-  return await getCookie('token');
- });
+class AuthProvider extends Component<{ children: ReactNode }, AuthState> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = {
+      isAuthenticated: false,
+      user: null,
+      token:''
+    };
+  }
 
-export const getRole = (async() => {
-  return await getCookie('role');
-});
-  
-
-const AuthContextProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
-
-    const loginHandler = (async (token:any) => {
-       return await setCookie('token',token,1,'');
+  login = (username:string,role:string,token:string) => { 
+    const user: User = {username,role}; 
+    this.setState({
+      isAuthenticated: true,
+      user,
+      token:token
     });
-    
-    const logoutHandler = (async(token:any) => {      
-        return await deleteCookie('token');
+  };
+
+  logout = () => {
+    this.setState({
+      isAuthenticated: false,
+      user: null,
+      token:''
     });
+  };
 
-    const [todos, setTodos] = React.useState<IAuthDetail[]>([
-    {
-        token: getToken(),
-        isLoggedIn: false,
-        isAdmin: false,
-        isUser: false,
-        login:loginHandler(getToken()),
-        logout:logoutHandler(getToken())
-    },
-  ]); 
-  return <AuthContext.Provider value={{todos}}>{children}</AuthContext.Provider>;
-};
+  render() {
+    const value = {
+      state: this.state,
+      login: this.login,
+      logout: this.logout,
+    };
 
-export default AuthContext;
+    return <AuthContext.Provider value={value}>{this.props.children}</AuthContext.Provider>;
+  }
+}
+
+export { AuthProvider, AuthContext };
