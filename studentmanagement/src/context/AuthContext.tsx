@@ -1,5 +1,6 @@
 import React, { Component, createContext, ReactNode } from 'react';
-import { AuthContextProps, AuthState, User } from '../services/context';
+import { AuthContextProps, AuthState, User } from '../services/IContext';
+
 
 // Create the AuthContext
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -29,6 +30,7 @@ class AuthProvider extends Component<{ children: ReactNode }, AuthState> {
       user: null,
       token:''
     });
+    window.history.replaceState(null, '', '/');
   };
 
   render() {

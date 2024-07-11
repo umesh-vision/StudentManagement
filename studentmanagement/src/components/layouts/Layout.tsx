@@ -11,7 +11,7 @@ class Layout extends Component<LayoutProps> {
     return (
       <Fragment>
         <Navigation />
-        <main>{this.props.navigation}</main>
+        <div className='padding-top'>{this.props.navigation}</div>
       </Fragment>
     )
   }

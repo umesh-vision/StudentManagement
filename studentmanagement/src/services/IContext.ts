@@ -1,11 +1,3 @@
-export interface AuthContextType{
-  token: string;
-  isLoggedIn: boolean;
-  isAdmin:boolean;
-  login: () => void;
-  logout: () => void;
-};
-  
 // Define the User interface
 export interface User {
   username: string;

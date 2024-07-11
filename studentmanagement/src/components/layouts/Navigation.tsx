@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {Nav} from 'react-bootstrap';
 import withAuth from '../../context/AuthContextExtenstion';
 import withNavigate from './NavigationExtenstion';
-import { AuthContextProps } from '../../services/context';
+import { AuthContextProps } from '../../services/IContext';
 
 interface IProps{ 
   auth:AuthContextProps;
@@ -23,12 +23,13 @@ class Navigation extends Component<IProps,Props>{
     const { user } = this.props.auth.state;
     if (user !==null) {     
       if (user.role === 'student') {
-        return (<div>
+        return (
+        <div className=''>
           <nav className="navbar navbar-expand navbar-dark bg-dark">
-            <Nav><Link className="navbar-brand" to='/'>Vision Student Management</Link></Nav> 
+            <Nav><Link className="navbar-brand container" to='/'>Vision Student Management</Link></Nav> 
               <div className="navbar-nav mr-auto"> 
                 <li className="nav-item">
-                  <Link to={"/pages/student"} className="nav-link">Student Board</Link>
+                  <Link to={"/pages/student/dashboard"} className="nav-link">Student Board</Link>
                 </li> 
                 <button className="btn navbar-btn btn-primary" onClick={this.handleLogout}><span className="glyphicon glyphicon-lock"></span>Logout</button>
               </div>
@@ -36,12 +37,13 @@ class Navigation extends Component<IProps,Props>{
         </div>)
       }
       if(user.role === 'admin'){
-        return (<div>
+        return (
+        <div className=''>
           <nav className="navbar navbar-expand navbar-dark bg-dark">
-            <Nav><Link className="navbar-brand" to='/'>Vision Student Management</Link></Nav> 
+            <Nav><Link className="navbar-brand container" to='/'>Vision Student Management</Link></Nav> 
               <div className="navbar-nav mr-auto"> 
                 <li className="nav-item">
-                  <Link to={"/pages/admin"} className="nav-link">Admin Board</Link>
+                  <Link to={"/pages/admin/dashboard"} className="nav-link">Admin Board</Link>
                 </li> 
                 <button className="btn navbar-btn btn-primary" onClick={this.handleLogout}><span className="glyphicon glyphicon-lock"></span>Logout</button>
               </div>
@@ -53,10 +55,10 @@ class Navigation extends Component<IProps,Props>{
       return (
         <div>
           <nav className="navbar navbar-expand navbar-dark bg-dark">
-            <Nav><Link className="navbar-brand" to='/'>Vision Student Management</Link></Nav> 
+            <Nav><Link className="navbar-brand container" to='/'>Vision Student Management</Link></Nav> 
               <div className="navbar-nav mr-auto"> 
                 <li className="nav-item">
-                  <Link to={"/page/home"} className="nav-link">Home</Link>
+                  <Link to={"/pages/home"} className="nav-link">Home</Link>
                 </li>               
               </div>
           </nav>

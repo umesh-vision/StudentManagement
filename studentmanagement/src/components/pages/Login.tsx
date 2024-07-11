@@ -1,10 +1,10 @@
 import { Component} from 'react'
 import { onChange,validationForm} from '../../utils/util'
 import "../../styles/nav.css"
-import { AuthReducersLogin } from '../../Redux/Reducers/Auth/AuthReducersLogin';
 import withAuth from '../../context/AuthContextExtenstion';
 import withNavigate from '../layouts/NavigationExtenstion';
-import { AuthContextProps } from '../../services/context';
+import { AuthContextProps } from '../../services/IContext';
+import { AuthReducersLogin } from '../../Redux/Reducers/auth/AuthReducersLogin';
 
 type LoginProps = { auth:AuthContextProps,  navigate: (path: string) => void;};
 interface IContext{
@@ -23,6 +23,7 @@ class Login extends Component<LoginProps,IContext>{
   componentDidMount() {
     this.props.auth.logout();
   }
+  
   render() {  
     const { username, password} = this.state;
     return(  
@@ -83,7 +84,7 @@ class Login extends Component<LoginProps,IContext>{
       let dto=await AuthReducersLogin(model);
       if(dto.status){
         this.props.auth.login(username, dto.role,dto.token);
-        dto.role==='admin'?this.props.navigate('/pages/admin'):this.props.navigate('/pages/student');  
+        dto.role==='admin'?this.props.navigate('/pages/admin/dashboard'):this.props.navigate('/pages/student/dashboard');  
       }     
     }
   })
