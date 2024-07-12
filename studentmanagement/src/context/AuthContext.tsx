@@ -39,7 +39,6 @@ class AuthProvider extends Component<{ children: ReactNode }, AuthState> {
       login: this.login,
       logout: this.logout,
     };
-
     return <AuthContext.Provider value={value}>{this.props.children}</AuthContext.Provider>;
   }
 }
