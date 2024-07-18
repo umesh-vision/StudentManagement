@@ -20,3 +20,8 @@ export const getCookie=(async(name: string)=> {
 export const deleteCookie=(name: string)=> {
     setCookie(name, '', -1);
 }
+export const deleteAllCookies=()=>{
+    var Cookies = document.cookie.split(';');
+    for (var i = 0; i < Cookies.length; i++)
+    document.cookie = Cookies[i] + "=;expires=" + new Date(0).toUTCString();
+ }

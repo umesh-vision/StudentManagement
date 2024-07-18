@@ -6,6 +6,7 @@ import withNavigate from '../layouts/NavigationExtenstion';
 import { AuthContextProps } from '../../services/IContext';
 import { AuthReducersLogin } from '../../Redux/Reducers/auth/AuthReducersLogin';
 import Validation from '../../utils/validation';
+import toast from 'react-hot-toast';
 
 type LoginProps = { auth:AuthContextProps,  navigate: (path: string) => void;};
 interface IContext{
@@ -22,6 +23,8 @@ class Login extends Component<LoginProps,IContext>{
       password:{name:"",value:""},
       submitted:false
     }   
+    this.onLogin = this.onLogin.bind(this);    
+    this.onChange = this.onChange.bind(this);
   }
   componentDidMount() {
     this.props.auth.logout();
@@ -34,7 +37,7 @@ class Login extends Component<LoginProps,IContext>{
         <div className='row'>
           <div className='col-md-12'>
             <h1>Login</h1>    
-            <form onSubmit={this.onLogin}>
+            <form onSubmit={this.onLogin} id="login" name="login-form">
               <div className="form-group">
                 <label htmlFor='userName'>User Name</label>
                 <input  
@@ -43,11 +46,10 @@ class Login extends Component<LoginProps,IContext>{
                   value={username.value}
                   onChange={this.onChange}
                   placeholder='User Name'
-                  className="form-control invalid"                  
+                  className="form-control"                  
                 />     
                 <Validation fieldName='User name' fieldType='string' value={username.value} showValidation={submitted} />             
-              </div>
-              <div className='text-denger'></div>
+              </div>          
               <div className="form-group">
                 <label htmlFor='password'>Password</label>
                 <input
@@ -58,8 +60,7 @@ class Login extends Component<LoginProps,IContext>{
                   placeholder='Password'
                   className="form-control"                             
                 />
-                <Validation fieldName='Password' fieldType='string' value={password.value} showValidation={submitted} />             
-                <label className='danger'></label>            
+                <Validation fieldName='Password' fieldType='string' value={password.value} showValidation={submitted} />                       
               </div>      
               <div className="form-group" style={{ paddingTop: "5px" }} >
                 <button className="btn btn-success" >Login</button>
@@ -89,7 +90,8 @@ class Login extends Component<LoginProps,IContext>{
       }        
       let dto=await AuthReducersLogin(model);
       if(dto.status){
-        this.props.auth.login(username, dto.role,dto.token);
+        this.props.auth.login(username, dto.role,dto.token,dto.userId);  
+        toast.success('Logged in successfully!');
         dto.role==='admin'?this.props.navigate('/pages/admin/dashboard'):this.props.navigate('/pages/student/dashboard');  
       }       
     }

@@ -31,7 +31,7 @@ class Validation extends Component<IProps, IState> {
     }
   }
 
-  validate() {debugger
+  validate() {
     let errorMessage = "";
     if (
       this.props.showValidation &&

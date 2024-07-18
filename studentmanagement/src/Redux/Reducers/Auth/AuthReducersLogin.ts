@@ -7,6 +7,7 @@ export const AuthReducersLogin=(async(model:any)=>{
       role:'',
       status:true,
       token:'',
+      userId:0,
     }
 
     var authOptions = {
@@ -22,10 +23,9 @@ export const AuthReducersLogin=(async(model:any)=>{
     .then(async(res) => {            
       if(res.status===200){        
          await axios.post(process.env.REACT_APP_BASE_URL+'Login/AuthorizeToken?token='+res.data.token)
-        .then(async(response) => {             
-          await response.data.map((i:any)=>i.type==='Role'?(setCookie('role',i.value,1,''),dto.role=i.value):console.log('fetching role...'));
+        .then(async(response) => {    
+          await response.data.map((i:any)=>i.type==='Role'?((setCookie('role',i.value,1,''),dto.role=i.value)):(i.type==='UserId'?(setCookie('userId',i.value,1,''),dto.userId=i.value):console.log("Fetching ...")));
         });
-        dto.token=res.data.toke;
         await setCookie('token',res.data.token,1,'');
         await setCookie('isLoggedIn',true,1,'');
         dto.status=true;

@@ -4,21 +4,27 @@ import {Nav} from 'react-bootstrap';
 import withAuth from '../../context/AuthContextExtenstion';
 import withNavigate from './NavigationExtenstion';
 import { AuthContextProps } from '../../services/IContext';
+import toast from 'react-hot-toast';
+import { deleteAllCookies } from '../../services/cookie';
 
 interface IProps{ 
   auth:AuthContextProps;
   navigate: (path: string) => void;
 }
 
-interface Props { 
- futureChange:any
-}
 
-class Navigation extends Component<IProps,Props>{ 
+class Navigation extends Component<IProps,any>{ 
   handleLogout = () => {
+    toast.success('Logged out successfully!');
+    deleteAllCookies();
     this.props.auth.logout();
     this.props.navigate('/');
   };
+
+  clearProfile = () => {
+    this.props.auth.setProfile(undefined);  
+  };
+
   render() {    
     const { user } = this.props.auth.state;
     if (user !==null) {     
@@ -30,6 +36,9 @@ class Navigation extends Component<IProps,Props>{
               <div className="navbar-nav mr-auto"> 
                 <li className="nav-item">
                   <Link to={"/pages/student/dashboard"} className="nav-link">Student Board</Link>
+                </li> 
+                <li className="nav-item">
+                  <Link to={"/pages/student/viewstudent"} className="nav-link">Student Profile</Link>
                 </li> 
                 <button className="btn navbar-btn btn-primary" onClick={this.handleLogout}><span className="glyphicon glyphicon-lock"></span>Logout</button>
               </div>
@@ -43,7 +52,10 @@ class Navigation extends Component<IProps,Props>{
             <Nav><Link className="navbar-brand container" to='/'>Vision Student Management</Link></Nav> 
               <div className="navbar-nav mr-auto"> 
                 <li className="nav-item">
-                  <Link to={"/pages/admin/dashboard"} className="nav-link">Admin Board</Link>
+                  <Link to={"/pages/admin/dashboard"} onClick={this.clearProfile} className="nav-link">Admin Board</Link>
+                </li> 
+                <li className="nav-item">
+                  <Link to={"/pages/student/viewstudent"} onClick={this.clearProfile} className="nav-link">Student Profile</Link>
                 </li> 
                 <button className="btn navbar-btn btn-primary" onClick={this.handleLogout}><span className="glyphicon glyphicon-lock"></span>Logout</button>
               </div>

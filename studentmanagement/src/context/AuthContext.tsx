@@ -1,7 +1,6 @@
 import React, { Component, createContext, ReactNode } from 'react';
 import { AuthContextProps, AuthState, User } from '../services/IContext';
 
-
 // Create the AuthContext
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
@@ -15,8 +14,8 @@ class AuthProvider extends Component<{ children: ReactNode }, AuthState> {
     };
   }
 
-  login = (username:string,role:string,token:string) => { 
-    const user: User = {username,role}; 
+  login = (username:string,role:string,token:string,userId:number) => { 
+    const user: User = {username,role,userId}; 
     this.setState({
       isAuthenticated: true,
       user,
@@ -24,11 +23,16 @@ class AuthProvider extends Component<{ children: ReactNode }, AuthState> {
     });
   };
 
+  setProfile=(state:any)=>{
+    this.setState({profile:state})
+  }
+
   logout = () => {
     this.setState({
       isAuthenticated: false,
       user: null,
-      token:''
+      token:'',
+      profile:undefined
     });
     window.history.replaceState(null, '', '/');
   };
@@ -38,6 +42,7 @@ class AuthProvider extends Component<{ children: ReactNode }, AuthState> {
       state: this.state,
       login: this.login,
       logout: this.logout,
+      setProfile: this.setProfile,
     };
     return <AuthContext.Provider value={value}>{this.props.children}</AuthContext.Provider>;
   }
