@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { onChange} from '../../../utils/util';
 import Validation from '../../../utils/validation';
+import { Button } from 'react-bootstrap';
 
 type props={
   form:any;
   saveForm:(form:any,index:any,e:any)=>void;
-  handleChange:(id:any,e:any)=>void;
   onDelete:(id:any,index:any,e:any)=>void;
   onCancel:(e:any,index?:number)=>void;
   index:any; 
@@ -105,7 +105,7 @@ class AddEditEducationDetail extends Component<props,studForm>{
             ...prevState.form,
             [name]: checked    
           }
-        })) 
+        }))      
         this.setState({isChecked:this.state.isChecked===true?false:true});      
       }  
     }
@@ -140,14 +140,25 @@ class AddEditEducationDetail extends Component<props,studForm>{
     e.preventDefault(); 
     if(this.validationForm(this))
     {  
+      let percentage;
+      let date;      
+      if(this.state.isStudy.value){
+        percentage=null;
+        date=null;
+      }
+     else{
+      percentage=this.state.percentage.value===undefined || this.state.percentage.value===""?null:this.state.percentage.value;
+      date=this.state.toDate.value===undefined ||this.state.toDate.value===""?null:this.state.toDate.value;;
+     }
+
       let model={
         id:this.state.form.id,
         university:this.state.university.value,
         degree:this.state.degree.value,
-        fromDate:this.state.fromDate.value,
-        toDate:this.state.toDate.value,
-        isStudy:this.state.isStudy.value,
-        percentage:this.state.percentage.value        
+        fromDate:this.state.fromDate.value!==""?this.state.fromDate.value:null,
+        toDate:date!==null?this.state.toDate.value:date,
+        isStudy:date ===null && percentage===null ?true:false,
+        percentage:percentage!==null?this.state.percentage.value:percentage     
       }
       await this.props.saveForm(model,index,e);
       this.setState({isComponentEdit:false})
@@ -155,6 +166,7 @@ class AddEditEducationDetail extends Component<props,studForm>{
   }
 
   onCancel=async(e:any,index?:any)=>{   
+    debugger
     const id=parseInt(e.target.form.id);
     if(id===0)
     {
@@ -189,144 +201,142 @@ class AddEditEducationDetail extends Component<props,studForm>{
 
   render(){
     const {university,degree,isStudy,percentage,fromDate,toDate,submitted,isChecked,isComponentEdit,form,index}=this.state;
-    return(
-      <div className='container'>  
-        <div className='row'>    
-          <div className='col-md-12'>      
-            <form id={form.id} onSubmit={(event)=>this.onSubmit(index,event)}>
-              <div className='row' >  
-                <div className='form-group col-md-4' style={{"display":university.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
-                  <label htmlFor={university.id}>University</label>
-                  <input
-                    type="text"
-                    id={university.id}
-                    name="university"
-                    className='form-control'
-                    value={university.value}
-                    disabled={                    
-                      university.value !== undefined || university.value !== "" ? 
-                      !isComponentEdit && form.id === 0 ? false : 
-                      isComponentEdit && form.id>0? false : true : true                    
-                    }   
-                    onChange={(event) => this.onChange(index, event)}
-                  />
-                  <Validation fieldName='University' fieldType='string' value={university.value} showValidation={submitted} />             
-                </div>
-                <div className='form-group col-md-4' style={{"display":degree.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
-                  <label htmlFor={degree.id}>Degree</label>
-                  <input
-                    type="text"
-                    id={degree.id}
-                    name="degree"
-                    className='form-control'
-                    value={degree.value}
-                    disabled={                    
-                        degree.value!==undefined ||  degree.value!=="" ?
-                        !isComponentEdit && form.id===0 ?false:
-                        isComponentEdit && form.id>0?false:true:true
-                    
-                    }       
-                    onChange={(event) => this.onChange(index, event)}
-                  />
-                  <Validation fieldName='Degree' fieldType='string' value={degree.value} showValidation={submitted} />             
-                </div>
-                <div className='form-group col-md-4' >
-                  <label htmlFor={isStudy.id}>Currently Study</label>
-                  <input
-                    type="checkbox"
-                    id={isStudy.id}
-                    name="isStudy"
-                    className='form-check'                    
-                    checked={isStudy.value}  
-                    disabled={                    
-                        isStudy.value!==undefined ||  isStudy.value!==false ?
-                        !isComponentEdit && form.id===0 ? false:isComponentEdit 
-                        && form.id>0?false:true:true
-                    }       
-                    onChange={(event) => this.onChange(index, event)}
-                  />                 
-                </div>
-                <div className='form-group col-md-4' style={{"display":fromDate.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
-                  <label htmlFor={fromDate.id}>From Year</label>
-                  <input
-                    type="date"
-                    id={fromDate.id}
-                    name="fromDate"
-                    className='form-control'
-                    value={fromDate.value}
-                    disabled={                    
-                      fromDate.value!==undefined ||  fromDate.value!=="" ?
+    return(    
+      <div className='row'>    
+        <div className='col-md-12'>      
+          <form id={form.id} onSubmit={(event)=>this.onSubmit(index,event)}>
+            <div className='row' >  
+              <div className='form-group col-md-4' style={{"display":university.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
+                <label htmlFor={university.id}>University</label>
+                <input
+                  type="text"
+                  id={university.id}
+                  name="university"
+                  className='form-control'
+                  value={university.value}
+                  disabled={                    
+                    university.value !== undefined || university.value !== "" ? 
+                    !isComponentEdit && form.id === 0 ? false : 
+                    isComponentEdit && form.id>0? false : true : true                    
+                  }   
+                  onChange={(event) => this.onChange(index, event)}
+                />
+                <Validation fieldName='University' fieldType='string' value={university.value} showValidation={submitted} />             
+              </div>
+              <div className='form-group col-md-4' style={{"display":degree.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
+                <label htmlFor={degree.id}>Degree</label>
+                <input
+                  type="text"
+                  id={degree.id}
+                  name="degree"
+                  className='form-control'
+                  value={degree.value}
+                  disabled={                    
+                      degree.value!==undefined ||  degree.value!=="" ?
+                      !isComponentEdit && form.id===0 ?false:
+                      isComponentEdit && form.id>0?false:true:true
+                  
+                  }       
+                  onChange={(event) => this.onChange(index, event)}
+                />
+                <Validation fieldName='Degree' fieldType='string' value={degree.value} showValidation={submitted} />             
+              </div>
+              <div className='form-group col-md-4' >
+                <label htmlFor={isStudy.id}>Currently Study</label>
+                <input
+                  type="checkbox"
+                  id={isStudy.id}
+                  name="isStudy"
+                  className='form-check'                    
+                  checked={isStudy.value}  
+                  disabled={                    
+                      isStudy.value!==undefined ||  isStudy.value!==false ?
                       !isComponentEdit && form.id===0 ? false:isComponentEdit 
                       && form.id>0?false:true:true
-                    }     
-                    onChange={(event) => this.onChange(index, event)}
-                  />                 
-                </div>
-                {!isChecked ?
-                  <>
-                    <div className='form-group col-md-4'  style={{"display":toDate.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
-                      <label htmlFor={toDate.id}>To Year</label>
-                      <input
-                        type="date"
-                        id={toDate.id}
-                        name="toDate"
-                        className='form-control'
-                        value={toDate.value}
-                        disabled={                    
-                          toDate.value!==undefined ||  toDate.value!=="" ?
-                          !isComponentEdit && form.id===0 ? false:isComponentEdit 
-                          && form.id>0?false:true:true
-                        }        
-                        onChange={(event) => this.onChange(index, event)}
-                      />                 
-                    </div>
-                    <div className='form-group col-md-4' style={{"display":percentage.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
-                      <label htmlFor={percentage.id}>Percentage</label>
-                      <input
-                        type="number"
-                        id={percentage.id}
-                        name="percentage"
-                        className='form-control' 
-                        value={percentage.value}
-                        disabled={                    
-                          percentage.value!==undefined || percentage.value!=="" ?
-                          !isComponentEdit  && form.id===0 ? false:isComponentEdit
-                           && form.id>0?false:true:true
-                        }  
-                        onChange={(event) => this.onChange(index, event)}
-                      />             
-                    </div>
-                  </>
-                  :<></>
-                }
-                <div className="form-group" style={{ paddingTop: "5px" }} >  
-                {
-                  form.id===0 ?
-                  <>
-                    <button type="submit" className='btn btn-success'>Save</button>
-                    <button id={`cancel-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger' onClick={this.onCancel}>Cancel</button>                 
-                          
-                  </>: !isComponentEdit?
-                  <>                 
-                    <button className='btn btn-success' onClick={this.onFormEdit}>Edit</button>
-                    <button id={`cancel-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger' onClick={(event)=>this.onDelete(index,event)}>Delete</button>
-                  </>
-                  :<></>
-                }
-                {
-                  isComponentEdit?
-                  <>
-                    <button type="submit" className='btn btn-success'>Save</button>
-                    <button id={`cancel-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger'   onClick={(event) => this.onCancel(event,index)}>Cancel</button>                 
-                          
-                  </>:<></>                  
-                } 
-                </div> 
+                  }       
+                  onChange={(event) => this.onChange(index, event)}
+                />                 
               </div>
-            </form>         
-          </div>
+              <div className='form-group col-md-4' style={{"display":fromDate.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
+                <label htmlFor={fromDate.id}>From Year</label>
+                <input
+                  type="date"
+                  id={fromDate.id}
+                  name="fromDate"
+                  className='form-control'
+                  value={fromDate.value}
+                  disabled={                    
+                    fromDate.value!==undefined ||  fromDate.value!=="" ?
+                    !isComponentEdit && form.id===0 ? false:isComponentEdit 
+                    && form.id>0?false:true:true
+                  }     
+                  onChange={(event) => this.onChange(index, event)}
+                />                 
+              </div>
+              {!isChecked ?
+                <>
+                  <div className='form-group col-md-4'  style={{"display":toDate.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
+                    <label htmlFor={toDate.id}>To Year</label>
+                    <input
+                      type="date"
+                      id={toDate.id}
+                      name="toDate"
+                      className='form-control'
+                      value={toDate.value}
+                      disabled={                    
+                        toDate.value!==undefined ||  toDate.value!=="" ?
+                        !isComponentEdit && form.id===0 ? false:isComponentEdit 
+                        && form.id>0?false:true:true
+                      }        
+                      onChange={(event) => this.onChange(index, event)}
+                    />                 
+                  </div>
+                  <div className='form-group col-md-4' style={{"display":percentage.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
+                    <label htmlFor={percentage.id}>Percentage</label>
+                    <input
+                      type="number"
+                      id={percentage.id}
+                      name="percentage"
+                      className='form-control' 
+                      value={percentage.value}
+                      disabled={                    
+                        percentage.value!==undefined || percentage.value!=="" ?
+                        !isComponentEdit  && form.id===0 ? false:isComponentEdit
+                          && form.id>0?false:true:true
+                      }  
+                      onChange={(event) => this.onChange(index, event)}
+                    />             
+                  </div>
+                </>
+                :<></>
+              }
+              <div className="form-group" style={{ paddingTop: "5px" }} >  
+              {
+                form.id===0 ?
+                <>
+                  <button type="submit" className='btn btn-success'>Save</button>
+                  <button id={`cancel-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger' onClick={this.onCancel}>Cancel</button>                 
+                  
+                </>: !isComponentEdit?
+                <>                 
+                  <button className='btn btn-success' onClick={this.onFormEdit}>Edit</button>
+                  <button id={`delete-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger' onClick={(event)=>this.onDelete(index,event)}>Delete</button>
+                </>
+                :<></>
+              }
+              {
+                isComponentEdit?
+                <>
+                  <button type="submit" className='btn btn-success'>Save</button>  
+                  <button id={`cancel-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger' onClick={(event) => this.onCancel(event,index)}>Cancel</button>                 
+                        
+                </>:<></>                  
+              } 
+              </div> 
+            </div>
+          </form>         
         </div>
-      </div>    
+      </div>  
     )
   }
 }

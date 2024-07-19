@@ -54,7 +54,7 @@ export const getEduById =async(id:any): Promise<EducationDTO>=> {
   }
 };
 
-export const addUpdateEducation=async(form:any):Promise<number>=>{    
+export const addUpdateEducation=async(form:any):Promise<number>=>{debugger    
   let status=0;
   let model ={
     educationDetailId:form.id,
