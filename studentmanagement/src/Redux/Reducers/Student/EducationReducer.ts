@@ -53,3 +53,53 @@ export const getEduById =async(id:any): Promise<EducationDTO>=> {
     return education;
   }
 };
+
+export const addUpdateEducation=async(form:any):Promise<number>=>{    
+  let status=0;
+  let model ={
+    educationDetailId:form.id,
+    userId:await getCookie("userId"),
+    university:form.university,
+    degree:form.degree,
+    percentage:form.percentage,
+    fromYear:form.fromDate,
+    toYear:form.toDate,
+    currentStudy:form.isStudy,
+  }
+  
+  var authOptions = {
+      method: "post",
+      url: process.env.REACT_APP_BASE_URL+'Education/education_detail/save',
+      data:JSON.stringify(model),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      json: true,
+  };    
+  await axios(authOptions)       
+  .then(async(res) => { 
+    if(res.status===200){  
+      status=res.data;   
+    } 
+  })
+  .catch((err) => {            
+     console.log(err)
+     status=0;
+  }); 
+  return status;
+}
+
+export const deleteEducation=async(id:any):Promise<boolean>=>{  
+  let status=true;    
+  await axios.delete(`${process.env.REACT_APP_BASE_URL}Education/education_detail/delete/${id}`)       
+  .then(async(res) => {            
+    if(res.status===200){        
+      status=true;
+    } 
+  })
+  .catch((err) => {            
+     console.log(err)
+     status=false;
+  }); 
+  return status;
+}

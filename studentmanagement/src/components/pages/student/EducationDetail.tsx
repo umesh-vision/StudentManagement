@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import AddEditEducationDetail from './AddEditEducationDetail';
-import { getEduById, getEduList } from '../../../Redux/Reducers/Student/EducationReducer';
+import { addUpdateEducation, deleteEducation, getEduById, getEduList } from '../../../Redux/Reducers/Student/EducationReducer';
 
 interface IEdu{
   forms:any[],
@@ -15,7 +15,7 @@ class EducationDetail extends Component<any,IEdu>{
       isAdd:false
     };
   }
-  async componentDidMount(id?:any) {    debugger
+  async componentDidMount(id?:any) {  
     let data=await getEduList();
     for(let i=0;i<=data.length-1;i++){   
       this.setState((prevState) => ({
@@ -23,55 +23,15 @@ class EducationDetail extends Component<any,IEdu>{
       }));      
     }     
   }
-
-  educationDetailById=async(id:any,index?:any)=>{   
-    debugger
-    // let data=await getEduById(id);
-    // if(data.eduId>0){   
-    //   this.setState((prevState) => {
-    //     const forms = [...prevState.forms];
-    //     forms[index] = {
-    //       ...forms[index],
-    //       university: data.university,
-    //       degree: data.degree,
-    //       fromDate: data.fromDate,
-    //       toDate: data.toDate,
-    //       isStudy: data.isStudy,
-    //       percentage: data.percentage
-    //     };
-    //     return { forms };
-      //});
-      // let updatedItemList =this.state.forms.map((item) => {
-      //     if (item.id === data.eduId) {
-      //       return { ...item, id: data.eduId,university:data.university, degree:data.degree, fromDate:data.fromDate, toDate:data.toDate,isStudy:data.isStudy,percentage:data.percentage };
-      //     }
-      //     return item;
-      // });
-
-      // this.setState((prevState) => ({
-      //   forms: [...prevState.forms, { id: data.eduId, university:data.university}]
-      // }));
-            
-        // if(this.state.editForms[index]!==undefined){
-        //   this.setState((prevState) => {
-        //     const editForms = [...prevState.editForms];       
-        //       editForms[index]["id"] = data.eduId;
-        //       editForms[index]["university"] = data.university;
-        //       editForms[index]["degree"] = data.degree;
-        //       editForms[index]["fromDate"] = data.fromDate;
-        //       editForms[index]["toDate"] = data.toDate;
-        //       editForms[index]["isStudy"] = data.isStudy;
-        //       editForms[index]["percentage"] = data.percentage;
-        //       return { editForms };          
-        //   });     
-        // }else{
-        //   this.setState((prevState) => ({
-        //     editForms: [...prevState.editForms, { id: data.eduId, university: data.university, degree: data.degree, fromDate:data.fromDate, toDate:data.toDate,isStudy:data.isStudy,percentage:data.percentage }],
-        //   }));
-        // }
-   
-   //  }  
+  
+  removeEducation=async(index:any)=>{
+    var form = [...this.state.forms];
+    if (index !== -1) {
+      form.splice(index, 1);
+      this.setState({forms: form});
+    }
   }
+
 
   handleAddForm = () => {        
     this.setState({isAdd:true})
@@ -89,9 +49,33 @@ class EducationDetail extends Component<any,IEdu>{
     });
   }
 
-  handleSubmit = (event:any) => {
-    event.preventDefault();
-    console.log(this.state.forms);
+  handleSubmit = async(form:any,index:any,e:any) => {    
+    e.preventDefault();
+    if(form.id===0)this.setState({isAdd:false}); 
+    const result=await addUpdateEducation(form);
+    if(result>0){
+      const data=await await getEduById(result);
+      let newForm={
+        id :data.eduId,
+        university:data.university,
+          degree : data.degree,
+          fromDate : data.fromDate,
+          toDate : data.toDate,
+          isStudy : data.isStudy,
+          percentage : data.percentage
+      }
+      this.setState((prevState) => {
+        const forms = [...prevState.forms];
+        forms[index] = newForm;
+        return { forms };
+      });  
+    } 
+  }
+
+  onDelete = async(id:any,index:any,e:any) => {    
+    e.preventDefault();
+    const result= await deleteEducation(id);
+    if(result) this.removeEducation(index);
   }
 
   onCancelForm= async(e:any,index?:number) => {
@@ -107,9 +91,6 @@ class EducationDetail extends Component<any,IEdu>{
         this.setState({forms:[]})
       }
     }
-    else{            
-      await this.educationDetailById(id,index); 
-    }
   }
 
   render(){
@@ -123,7 +104,9 @@ class EducationDetail extends Component<any,IEdu>{
                     key={form.id}
                     form={form}
                     index={index}
+                    isAdd={this.state.isAdd}
                     handleChange={this.handleChange}
+                    onDelete={this.onDelete}
                     saveForm={this.handleSubmit}
                     onCancel={this.onCancelForm}
                   />

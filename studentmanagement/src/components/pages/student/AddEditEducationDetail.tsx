@@ -4,10 +4,12 @@ import Validation from '../../../utils/validation';
 
 type props={
   form:any;
-  saveForm:(e:any)=>void;
+  saveForm:(form:any,index:any,e:any)=>void;
   handleChange:(id:any,e:any)=>void;
+  onDelete:(id:any,index:any,e:any)=>void;
   onCancel:(e:any,index?:number)=>void;
   index:any; 
+  isAdd:boolean;
 }
 
 interface studForm{
@@ -42,7 +44,7 @@ class AddEditEducationDetail extends Component<props,studForm>{
     }
   }
 
-  componentDidMount(): void {   debugger
+  componentDidMount(): void { 
     this.setState({    
       university:{id:`university-${this.state.form.id}`,name:"university", value:this.props.form.university!==null?this.props.form.university:""},
       degree:{id:`degree-${this.props.form.id}`,name:"degree",value:this.props.form.degree!==null?this.props.form.degree:""},
@@ -58,7 +60,7 @@ class AddEditEducationDetail extends Component<props,studForm>{
 
   componentDidUpdate(prevProps: Readonly<props>, prevState: Readonly<studForm>, snapshot?: any): void {        
     if(prevState.form!==this.state.form)
-      { debugger
+      { 
         this.setState({    
           university:{id:`university-${this.state.form.id}`,name:"university", value:this.state.form.university!==null?this.state.form.university:""},
           degree:{id:`degree-${this.state.form.id}`,name:"degree",value:this.state.form.degree!==null?this.state.form.degree:""},
@@ -71,7 +73,7 @@ class AddEditEducationDetail extends Component<props,studForm>{
         })    
     }     
     else if(prevProps.form!==this.state.form && !this.state.isComponentEdit)
-    { debugger
+    { 
       this.setState({    
         university:{id:`university-${this.props.form.id}`,name:"university", value:this.props.form.university!==null?this.props.form.university:""},
         degree:{id:`degree-${this.props.form.id}`,name:"degree",value:this.props.form.degree!==null?this.props.form.degree:""},
@@ -85,36 +87,36 @@ class AddEditEducationDetail extends Component<props,studForm>{
     }  
   } 
 
-  onChange=(index:any,e:any)=>{    
-    debugger
+  onChange=(index:any,e:any)=>{            
     const { name, value,checked,form } = e.target; 
-    if(name!=="isStudy"&& parseInt(form.id)>0){
-      this.setState((prevState) => ({
-        form: {
-          ...prevState.form,
-          [name]: value    
-        }
-      }))    
+    let id=parseInt(form.id);
+    if(id>0){
+      if(name!=="isStudy"){
+        this.setState((prevState) => ({
+          form: {
+            ...prevState.form,
+            [name]: value    
+          }
+        }))    
+      }
+      else{
+        this.setState((prevState) => ({
+          form: {
+            ...prevState.form,
+            [name]: checked    
+          }
+        })) 
+        this.setState({isChecked:this.state.isChecked===true?false:true});      
+      }  
     }
-    else if(parseInt(form.id)===0){debugger
-      this.setState((prevState) => ({
-        form: {
-          ...prevState.form,
-          [name]: value    
-        }
-        
-      }))   
-      this.props.handleChange(index, e)
-    }else{
-      
-      this.setState((prevState) => ({
-        form: {
-          ...prevState.form,
-          [name]: checked    
-        }
-      })) 
-      this.setState({isChecked:this.state.isChecked===true?false:true});       
-    }
+    if(id===0){      
+      if(name!=="isStudy"){
+        onChange(this,name,value,id);
+      }else{
+        onChange(this,name,checked,id);
+        this.setState({isChecked:this.state.isChecked===true?false:true});  
+      }    
+    }  
   }
   
   validationForm=(context:any)=>{     
@@ -122,7 +124,7 @@ class AddEditEducationDetail extends Component<props,studForm>{
     let status=true;
     for(let key in cs){
         if(cs.hasOwnProperty(key)){
-           if(key!=="submitted" && key!=="forms"  && key!=="indexs" && key!=="isChecked"){
+           if(key==='university' || key==='degree'){
               const isRequired=cs[key].value!==undefined && cs[key].value!==""?false:true;
               if(isRequired){
                 status=false
@@ -133,37 +135,41 @@ class AddEditEducationDetail extends Component<props,studForm>{
     return status;
   }
   
-  onSubmit=(e:any)=>{    
+  onSubmit=async (index:any,e:any)=>{        
     this.setState({submitted:true})    
     e.preventDefault(); 
     if(this.validationForm(this))
-    {    
-      console.log(this.state)
+    {  
+      let model={
+        id:this.state.form.id,
+        university:this.state.university.value,
+        degree:this.state.degree.value,
+        fromDate:this.state.fromDate.value,
+        toDate:this.state.toDate.value,
+        isStudy:this.state.isStudy.value,
+        percentage:this.state.percentage.value        
+      }
+      await this.props.saveForm(model,index,e);
+      this.setState({isComponentEdit:false})
     }
   }
 
-  onCheck=(index:any,e:any)=>{
-    this.setState({isChecked:this.state.isChecked===true?false:true});
-    this.props.handleChange(index, e)
-  }
-
   onCancel=async(e:any,index?:any)=>{   
-    debugger
     const id=parseInt(e.target.form.id);
     if(id===0)
     {
       this.props.onCancel(e);
     }
     else
-    {
-   //   this.props.onCancel(e,index);
+    {   
       if(this.props.form.isStudy){              
         this.setState({isChecked:true});
       }
       else{
         this.setState({isChecked:false});
-      }
+      }      
       this.setState({isComponentEdit:false});      
+      this.props.onCancel(e,index);
     }
   }
   
@@ -176,8 +182,9 @@ class AddEditEducationDetail extends Component<props,studForm>{
     this.setState({isComponentEdit:true})
   }
 
-  onDelete=(formId:any)=>{
-    console.log(formId)
+  onDelete=(index:any,e:any)=>{ 
+    e.preventDefault(); 
+    this.props.onDelete(this.state.form.id,index,e);    
   }
 
   render(){
@@ -186,7 +193,7 @@ class AddEditEducationDetail extends Component<props,studForm>{
       <div className='container'>  
         <div className='row'>    
           <div className='col-md-12'>      
-            <form id={form.id} onSubmit={this.onSubmit}>
+            <form id={form.id} onSubmit={(event)=>this.onSubmit(index,event)}>
               <div className='row' >  
                 <div className='form-group col-md-4' style={{"display":university.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
                   <label htmlFor={university.id}>University</label>
@@ -196,7 +203,11 @@ class AddEditEducationDetail extends Component<props,studForm>{
                     name="university"
                     className='form-control'
                     value={university.value}
-                    disabled={university.value!==undefined && !isComponentEdit?true:false}      
+                    disabled={                    
+                      university.value !== undefined || university.value !== "" ? 
+                      !isComponentEdit && form.id === 0 ? false : 
+                      isComponentEdit && form.id>0? false : true : true                    
+                    }   
                     onChange={(event) => this.onChange(index, event)}
                   />
                   <Validation fieldName='University' fieldType='string' value={university.value} showValidation={submitted} />             
@@ -209,7 +220,12 @@ class AddEditEducationDetail extends Component<props,studForm>{
                     name="degree"
                     className='form-control'
                     value={degree.value}
-                    disabled={degree.value!==undefined && !isComponentEdit?true:false}      
+                    disabled={                    
+                        degree.value!==undefined ||  degree.value!=="" ?
+                        !isComponentEdit && form.id===0 ?false:
+                        isComponentEdit && form.id>0?false:true:true
+                    
+                    }       
                     onChange={(event) => this.onChange(index, event)}
                   />
                   <Validation fieldName='Degree' fieldType='string' value={degree.value} showValidation={submitted} />             
@@ -221,8 +237,12 @@ class AddEditEducationDetail extends Component<props,studForm>{
                     id={isStudy.id}
                     name="isStudy"
                     className='form-check'                    
-                    checked={isStudy.value}                  
-                    disabled={!isComponentEdit}      
+                    checked={isStudy.value}  
+                    disabled={                    
+                        isStudy.value!==undefined ||  isStudy.value!==false ?
+                        !isComponentEdit && form.id===0 ? false:isComponentEdit 
+                        && form.id>0?false:true:true
+                    }       
                     onChange={(event) => this.onChange(index, event)}
                   />                 
                 </div>
@@ -234,7 +254,11 @@ class AddEditEducationDetail extends Component<props,studForm>{
                     name="fromDate"
                     className='form-control'
                     value={fromDate.value}
-                    disabled={fromDate.value!==undefined && !isComponentEdit?true:false}      
+                    disabled={                    
+                      fromDate.value!==undefined ||  fromDate.value!=="" ?
+                      !isComponentEdit && form.id===0 ? false:isComponentEdit 
+                      && form.id>0?false:true:true
+                    }     
                     onChange={(event) => this.onChange(index, event)}
                   />                 
                 </div>
@@ -248,7 +272,11 @@ class AddEditEducationDetail extends Component<props,studForm>{
                         name="toDate"
                         className='form-control'
                         value={toDate.value}
-                        disabled={toDate.value!==undefined && !isComponentEdit?true:false}       
+                        disabled={                    
+                          toDate.value!==undefined ||  toDate.value!=="" ?
+                          !isComponentEdit && form.id===0 ? false:isComponentEdit 
+                          && form.id>0?false:true:true
+                        }        
                         onChange={(event) => this.onChange(index, event)}
                       />                 
                     </div>
@@ -258,9 +286,13 @@ class AddEditEducationDetail extends Component<props,studForm>{
                         type="number"
                         id={percentage.id}
                         name="percentage"
-                        className='form-control'     
-                        disabled={percentage.value>0 && !isComponentEdit?true:false}             
+                        className='form-control' 
                         value={percentage.value}
+                        disabled={                    
+                          percentage.value!==undefined || percentage.value!=="" ?
+                          !isComponentEdit  && form.id===0 ? false:isComponentEdit
+                           && form.id>0?false:true:true
+                        }  
                         onChange={(event) => this.onChange(index, event)}
                       />             
                     </div>
@@ -277,7 +309,7 @@ class AddEditEducationDetail extends Component<props,studForm>{
                   </>: !isComponentEdit?
                   <>                 
                     <button className='btn btn-success' onClick={this.onFormEdit}>Edit</button>
-                    <button id={`cancel-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger' onClick={()=>this.onDelete(form.id)}>Delete</button>
+                    <button id={`cancel-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger' onClick={(event)=>this.onDelete(index,event)}>Delete</button>
                   </>
                   :<></>
                 }
