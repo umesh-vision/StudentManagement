@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Routes,Route} from 'react-router-dom';
+import {Routes,Route, Navigate} from 'react-router-dom';
 import Layout from './components/layouts/Layout';
 import Login from './components/pages/Login';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -21,8 +21,7 @@ type IProps={
   auth:AuthContextProps
 }
 
-class App extends Component<IProps>{
- 
+class App extends Component<IProps>{ 
   render() {
     return(  
       <>
@@ -32,11 +31,12 @@ class App extends Component<IProps>{
         />       
         <Layout navigation={
           <Routes>       
-              <Route path='/' element={<Login />} /> 
-              <Route path='/pages/home'  element={<Home />} />
+              <Route path='/' element={<Login />} />     
+              <Route path='/pages/home' element={<Home />} />
               {this.props.auth.state.isAuthenticated?(<Route path="/pages/admin/dashboard" element={<AdminDashboard />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path="/pages/student/viewstudent" element={<ViewStudentDetail />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path='/pages/student/dashboard' element={<StudentDashboard />}/>):(<Route path="/" element={<Login />} />)}
+              <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         } />
       </>

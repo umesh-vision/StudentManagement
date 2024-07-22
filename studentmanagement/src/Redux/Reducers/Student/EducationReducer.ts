@@ -16,9 +16,7 @@ export const getEduList =async(): Promise<EducationDTO[]>=> {
           isStudy:ed.currentStudy?ed.currentStudy:false,
           percentage:ed.percentage
       }));
-      console.log(education)
-      return education;  
-      
+      return education;        
     } 
     catch (error){   
       return [];
@@ -54,7 +52,7 @@ export const getEduById =async(id:any): Promise<EducationDTO>=> {
   }
 };
 
-export const addUpdateEducation=async(form:any):Promise<number>=>{debugger    
+export const addUpdateEducation=async(form:any):Promise<number>=>{    
   let status=0;
   let model ={
     educationDetailId:form.id,

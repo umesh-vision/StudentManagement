@@ -1,13 +1,12 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { onChange} from '../../../utils/util';
 import Validation from '../../../utils/validation';
-import { Button } from 'react-bootstrap';
 
 type props={
   form:any;
   saveForm:(form:any,index:any,e:any)=>void;
   onDelete:(id:any,index:any,e:any)=>void;
-  onCancel:(e:any,index?:number)=>void;
+  onCancel:(id:number)=>void;
   index:any; 
   isAdd:boolean;
 }
@@ -87,7 +86,7 @@ class AddEditEducationDetail extends Component<props,studForm>{
     }  
   } 
 
-  onChange=(index:any,e:any)=>{            
+  onChange=(e:any)=>{            
     const { name, value,checked,form } = e.target; 
     let id=parseInt(form.id);
     if(id>0){
@@ -165,12 +164,11 @@ class AddEditEducationDetail extends Component<props,studForm>{
     }
   }
 
-  onCancel=async(e:any,index?:any)=>{   
-    debugger
-    const id=parseInt(e.target.form.id);
+  onCancel=async(e:any)=>{      
+    const id=parseInt(e.currentTarget.form.id);
     if(id===0)
     {
-      this.props.onCancel(e);
+      this.props.onCancel(id);
     }
     else
     {   
@@ -181,7 +179,7 @@ class AddEditEducationDetail extends Component<props,studForm>{
         this.setState({isChecked:false});
       }      
       this.setState({isComponentEdit:false});      
-      this.props.onCancel(e,index);
+      this.props.onCancel(id);
     }
   }
   
@@ -201,13 +199,23 @@ class AddEditEducationDetail extends Component<props,studForm>{
 
   render(){
     const {university,degree,isStudy,percentage,fromDate,toDate,submitted,isChecked,isComponentEdit,form,index}=this.state;
-    return(    
-      <div className='row'>    
-        <div className='col-md-12'>      
-          <form id={form.id} onSubmit={(event)=>this.onSubmit(index,event)}>
+    return(       
+      <form id={form.id} onSubmit={(event)=>this.onSubmit(index,event)}  style={{paddingTop:"15px"}}>
+        <div className="card text-bg-light" style={{backgroundColor:""}}>   
+          <div className="card-body">       
             <div className='row' >  
-              <div className='form-group col-md-4' style={{"display":university.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
-                <label htmlFor={university.id}>University</label>
+              {
+                !isComponentEdit && form.id>0 ?
+                <> 
+                  <div className='form-group col-md-12' style={{textAlign:"end"}}>
+                    <button className="btn btn-sm btn-outline-dark" onClick={this.onFormEdit}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="30px" height="20px"><path fill="#ea9a10" d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160V416c0 53 43 96 96 96H352c53 0 96-43 96-96V320c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H96z"/></svg></button>     
+                    <button className="btn btn-sm btn-outline-dark" style={{marginLeft:"5px"}} onClick={(event)=>this.onDelete(index,event)}><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="30px" height="20px"><path fill="#f20707" d="M32 464a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128H32zm272-256a16 16 0 0 1 32 0v224a16 16 0 0 1 -32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1 -32 0zm-96 0a16 16 0 0 1 32 0v224a16 16 0 0 1 -32 0zM432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.7 23.7 0 0 0 -21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0 -16-16z"/></svg></button>                    
+                  </div> 
+                </>
+                :<></>
+              }
+              <div className='form-group col-md-5' style={{"display":university.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
+                <label className="form-label fw-bold" htmlFor={university.id}>University</label><span className="text-danger" >*</span>
                 <input
                   type="text"
                   id={university.id}
@@ -219,12 +227,12 @@ class AddEditEducationDetail extends Component<props,studForm>{
                     !isComponentEdit && form.id === 0 ? false : 
                     isComponentEdit && form.id>0? false : true : true                    
                   }   
-                  onChange={(event) => this.onChange(index, event)}
+                  onChange={(event) => this.onChange(event)}
                 />
                 <Validation fieldName='University' fieldType='string' value={university.value} showValidation={submitted} />             
               </div>
-              <div className='form-group col-md-4' style={{"display":degree.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
-                <label htmlFor={degree.id}>Degree</label>
+              <div className='form-group col-md-5' style={{"display":degree.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
+                <label className="form-label fw-bold" htmlFor={degree.id}>Degree</label><span className="text-danger" >*</span>
                 <input
                   type="text"
                   id={degree.id}
@@ -237,28 +245,28 @@ class AddEditEducationDetail extends Component<props,studForm>{
                       isComponentEdit && form.id>0?false:true:true
                   
                   }       
-                  onChange={(event) => this.onChange(index, event)}
+                  onChange={(event) => this.onChange(event)}
                 />
                 <Validation fieldName='Degree' fieldType='string' value={degree.value} showValidation={submitted} />             
               </div>
-              <div className='form-group col-md-4' >
-                <label htmlFor={isStudy.id}>Currently Study</label>
+              <div className='form-group col-md-2' >
+                <label className="form-label fw-bold" htmlFor={isStudy.id}>Currently Study</label>
                 <input
                   type="checkbox"
                   id={isStudy.id}
                   name="isStudy"
-                  className='form-check'                    
+                  className='form-check'                 
                   checked={isStudy.value}  
                   disabled={                    
                       isStudy.value!==undefined ||  isStudy.value!==false ?
                       !isComponentEdit && form.id===0 ? false:isComponentEdit 
                       && form.id>0?false:true:true
                   }       
-                  onChange={(event) => this.onChange(index, event)}
+                  onChange={(event) => this.onChange(event)}
                 />                 
               </div>
               <div className='form-group col-md-4' style={{"display":fromDate.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
-                <label htmlFor={fromDate.id}>From Year</label>
+                <label className="form-label fw-bold" htmlFor={fromDate.id}>From Year</label>
                 <input
                   type="date"
                   id={fromDate.id}
@@ -270,13 +278,13 @@ class AddEditEducationDetail extends Component<props,studForm>{
                     !isComponentEdit && form.id===0 ? false:isComponentEdit 
                     && form.id>0?false:true:true
                   }     
-                  onChange={(event) => this.onChange(index, event)}
+                  onChange={(event) => this.onChange(event)}
                 />                 
               </div>
               {!isChecked ?
                 <>
                   <div className='form-group col-md-4'  style={{"display":toDate.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
-                    <label htmlFor={toDate.id}>To Year</label>
+                    <label className="form-label fw-bold" htmlFor={toDate.id}>To Year</label>
                     <input
                       type="date"
                       id={toDate.id}
@@ -288,11 +296,11 @@ class AddEditEducationDetail extends Component<props,studForm>{
                         !isComponentEdit && form.id===0 ? false:isComponentEdit 
                         && form.id>0?false:true:true
                       }        
-                      onChange={(event) => this.onChange(index, event)}
+                      onChange={(event) => this.onChange(event)}
                     />                 
                   </div>
                   <div className='form-group col-md-4' style={{"display":percentage.value==="" && form.id>0 && !isComponentEdit?"none":"inline"}}>
-                    <label htmlFor={percentage.id}>Percentage</label>
+                    <label className="form-label fw-bold" htmlFor={percentage.id}>Percentage</label>
                     <input
                       type="number"
                       id={percentage.id}
@@ -302,41 +310,38 @@ class AddEditEducationDetail extends Component<props,studForm>{
                       disabled={                    
                         percentage.value!==undefined || percentage.value!=="" ?
                         !isComponentEdit  && form.id===0 ? false:isComponentEdit
-                          && form.id>0?false:true:true
+                        && form.id>0?false:true:true
                       }  
-                      onChange={(event) => this.onChange(index, event)}
+                      onChange={(event) => this.onChange(event)}
                     />             
                   </div>
                 </>
                 :<></>
               }
-              <div className="form-group" style={{ paddingTop: "5px" }} >  
-              {
-                form.id===0 ?
+             </div>
+              <div className='row'> 
+              { form.id===0?
                 <>
-                  <button type="submit" className='btn btn-success'>Save</button>
-                  <button id={`cancel-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger' onClick={this.onCancel}>Cancel</button>                 
-                  
-                </>: !isComponentEdit?
-                <>                 
-                  <button className='btn btn-success' onClick={this.onFormEdit}>Edit</button>
-                  <button id={`delete-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger' onClick={(event)=>this.onDelete(index,event)}>Delete</button>
-                </>
-                :<></>
+                  <div className="form-group" style={{paddingTop:"5px",textAlign:"center"}}> 
+                    <button className="btn btn-primary" >Save</button>
+                    <button className='btn btn-secondary' style={{marginLeft:"5px"}} onClick={this.onCancel}>Cancel</button>                 
+                  </div>   
+                </>:<></>
               }
               {
                 isComponentEdit?
                 <>
-                  <button type="submit" className='btn btn-success'>Save</button>  
-                  <button id={`cancel-${form.id}`} style={{marginLeft:'5px'}}  className='btn btn-danger' onClick={(event) => this.onCancel(event,index)}>Cancel</button>                 
-                        
+                  <div className="form-group" style={{paddingTop:"5px",textAlign:"center"}}> 
+                    <button className="btn btn-primary" >Save</button>
+      
+                    <button className='btn btn-secondary' style={{marginLeft:"5px"}} onClick={this.onCancel}>Cancel</button>                 
+                  </div> 
                 </>:<></>                  
               } 
-              </div> 
             </div>
-          </form>         
-        </div>
-      </div>  
+          </div>     
+        </div>    
+      </form> 
     )
   }
 }
