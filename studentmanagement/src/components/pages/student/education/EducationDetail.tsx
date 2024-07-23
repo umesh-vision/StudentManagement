@@ -1,6 +1,6 @@
 import  { Component } from 'react';
 import AddEditEducationDetail from './AddEditEducationDetail';
-import { addUpdateEducation, deleteEducation, getEduById, getEduList } from '../../../Redux/Reducers/Student/EducationReducer';
+import { addUpdateEducation, deleteEducation, getEduById, getEduList } from '../../../../Redux/Reducers/Student/EducationReducer';
 import { Button } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 

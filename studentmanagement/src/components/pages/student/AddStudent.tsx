@@ -337,7 +337,7 @@ export class StudentModel extends Component<ModalProps,student>{
                                         </div>
                                         <div className='form-group col-md-6'>                                            
                                             <label htmlFor='image'>Upload</label>   
-                                            <input type='file'  onChange={this.onUpload} className="form-control" name="image" />                                                   
+                                            <input type='file' onChange={this.onUpload} className="form-control" name="image" />                                                   
                                         </div>
                                         { 
                                             image.value !==undefined && image.value!=="" &&

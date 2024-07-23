@@ -6,7 +6,7 @@ import { getStudentById } from "../../../Redux/Reducers/Student/StudentReducer";
 import { getCookie } from "../../../services/cookie";
 import { AuthContextProps } from "../../../services/IContext";
 import StudentProfile from "./StudentProfile";
-import EducationDetail from "./EducationDetail";
+import EducationDetail from "./education/EducationDetail";
 import { Box, Tab, Tabs, Typography } from "@material-ui/core";
 
 

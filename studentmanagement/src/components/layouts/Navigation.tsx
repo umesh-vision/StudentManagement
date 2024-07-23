@@ -40,8 +40,8 @@ class Navigation extends Component<NavbarProps, NavbarState> {
         { label: 'Admin Board',  path: '/pages/admin/dashboard' },
         { label: 'Student Profile', path: '/pages/student/viewstudent' }
       ],
-      userName: 'John Doe',
-      url: 'https://via.placeholder.com/50x40',
+      userName: '',
+      url: '',
     };
   }
   

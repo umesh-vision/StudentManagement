@@ -1,6 +1,6 @@
 import { Component } from 'react';
-import { onChange} from '../../../utils/util';
-import Validation from '../../../utils/validation';
+import { onChange} from '../../../../utils/util';
+import Validation from '../../../../utils/validation';
 
 type props={
   form:any;
