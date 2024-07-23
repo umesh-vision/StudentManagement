@@ -1,24 +1,66 @@
-import React, { Component} from 'react'
+import  { Component } from 'react';
 import { Link } from 'react-router-dom';
-import {Nav} from 'react-bootstrap';
-import withAuth from '../../context/AuthContextExtenstion';
 import withNavigate from './NavigationExtenstion';
-import { AuthContextProps } from '../../services/IContext';
-import toast from 'react-hot-toast';
+import withAuth from '../../context/AuthContextExtenstion';
+import { text, wrapWithB, wrapWithH5 } from '../../custom-hooks/custom';
+import { pipe } from '../../custom-hooks/pipe';
 import { deleteAllCookies } from '../../services/cookie';
+import { AuthContextProps } from '../../services/IContext';
+import { getStudentById } from '../../Redux/Reducers/Student/StudentReducer';
+import toast from 'react-hot-toast';
 
-interface IProps{ 
+interface NavItem {
+  label: string;
+  path: string;
+}
+
+type NavbarProps={
   auth:AuthContextProps;
   navigate: (path: string) => void;
 }
 
+interface NavbarState {
+  studentItems: NavItem[];
+  adminItems: NavItem[];
+  userName: string;
+  url: string;
+}
 
-class Navigation extends Component<IProps,any>{ 
-  async componentDidMount() {
+const transformString = pipe(text,wrapWithH5,wrapWithB);
+
+class Navigation extends Component<NavbarProps, NavbarState> {
+  constructor(props: NavbarProps) {
+    super(props);
+    this.state = {
+      studentItems:[
+        { label: 'Student Board', path: '/pages/student/dashboard' },
+        { label: 'Profile', path: '/pages/student/viewstudent' }
+       ],
+       adminItems:[
+        { label: 'Admin Board',  path: '/pages/admin/dashboard' },
+        { label: 'Student Profile', path: '/pages/student/viewstudent' }
+      ],
+      userName: 'John Doe',
+      url: 'https://via.placeholder.com/50x40',
+    };
+  }
+  
+  async componentDidMount() {    
     await deleteAllCookies();
     this.props.navigate('/');
   }
 
+  async componentDidUpdate(prevProps: Readonly<NavbarProps>, prevState: Readonly<NavbarState>, snapshot?: any) {
+    if(prevProps!==this.props)
+    {    
+      let id=this.props.auth.state.user?.userId;
+      if(id!==undefined && id>0){
+        const result=await getStudentById(id);
+        this.setState({url:result.image})
+        this.setState({userName:result.studentName})
+      }
+    }
+  }
 
   handleLogout = () => {
     toast.success('Logged out successfully!');
@@ -31,55 +73,74 @@ class Navigation extends Component<IProps,any>{
     this.props.auth.setProfile(undefined);  
   };
 
-  render() { 
+  render() {
     const { user } = this.props.auth.state;
-    if (user !==null) { 
-        return (     
-        <div className=''>       
-          <nav className="navbar navbar-expand navbar-dark bg-dark">
-            <Nav><Link className="navbar-brand container" to='/'>Vision Student Management</Link></Nav> 
-            <div className="navbar-nav"> 
-              {
-                user.role === 'student'?
-                <>
+    return (
+      <div>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div className="container-fluid">
+            <Link className="navbar-brand" to='/' style={{paddingTop:"12px"}}>{transformString("Vision Student Management")}</Link>
+            <button
+                className="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+                aria-controls="navbarNav"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+              >
+                <span className="navbar-toggler-icon"></span>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarNav">
+              <ul className="navbar-nav mr-auto">
+                {user !== null ? (
+                  user.role === 'student' ? (
+                    <>
+                      {this.state.studentItems.map((item) => (
+                        <li className="nav-item" key={item.path}>
+                          <Link className="nav-link" to={item.path}>
+                            {item.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      {this.state.adminItems.map((item) => (
+                        <li className="nav-item" key={item.path}>
+                          <Link className="nav-link" to={item.path} onClick={this.clearProfile}>
+                            {item.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </>
+                  )
+                ) : (
                   <li className="nav-item">
-                    <Link to={"/pages/student/dashboard"} className="nav-link">Student Board</Link>
-                  </li> 
+                    <Link to="/pages/home" className="nav-link">Home</Link>
+                  </li>
+                )}
+              </ul>
+              {user && (
+                <ul className="navbar-nav ms-auto">
                   <li className="nav-item">
-                    <Link to={"/pages/student/viewstudent"} className="nav-link">Student Profile</Link>
-                  </li>                
-                  <button className="btn navbar-btn btn-danger" onClick={this.handleLogout}><span className="glyphicon glyphicon-lock"></span>Logout</button>         
-                </>:
-                <>          
+                    <img src={this.state.url} className="nav-link" alt="User" width="60" height="40" style={{ padding:"1px", backgroundColor: 'white' }} />
+                  </li>
                   <li className="nav-item">
-                    <Link to={"/pages/admin/dashboard"} onClick={this.clearProfile} className="nav-link">Admin Board</Link>
-                  </li> 
+                    <label className="nav-link">{this.state.userName}</label>
+                  </li>
                   <li className="nav-item">
-                    <Link to={"/pages/student/viewstudent"} onClick={this.clearProfile} className="nav-link">Student Profile</Link>
-                  </li>            
-                  <button className="btn navbar-btn btn-danger" style={{float: "right"}} onClick={this.handleLogout}><span className="glyphicon glyphicon-lock"></span>Logout</button>                  
-                </>
-              }        
+                    <button className="btn btn-danger" onClick={this.handleLogout}>Logout</button>
+                  </li>
+                </ul>
+              )}
             </div>
-          </nav>
-        </div>
-      )
-    }
-    else{
-      return (
-        <div>
-          <nav className="navbar navbar-expand navbar-dark bg-dark">
-            <Nav><Link className="navbar-brand container" to='/'>Vision Student Management</Link></Nav> 
-              <div className="navbar-nav mr-auto"> 
-                <li className="nav-item">
-                  <Link to={"/pages/home"} className="nav-link">Home</Link>
-                </li>               
-              </div>
-          </nav>
-        </div>
-      )      
-    }
+          </div>
+        </nav>
+      </div>
+    );
   }
 }
 export default withAuth(withNavigate(Navigation));
+
 

@@ -5,6 +5,7 @@ export interface User {
   username: string;
   role: string;
   userId:number;
+  
 }
 
 // Define the AuthState interface
