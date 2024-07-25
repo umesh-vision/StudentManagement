@@ -74,7 +74,16 @@ body{
 .shadow-none {
   box-shadow: none!important;
 }
+.model{
+  --bs-modal-width:550px!important;
+}
 
-/* .text-danger{
+.card1 {
+  margin: 0 auto; /* Added */
+  float: none; /* Added */
+}
 
-} */
+.slick-prev:before,
+.slick-next:before {
+  color:  silver !important;
+}

@@ -30,12 +30,8 @@ export const getStudentList = async (page:number,pageSize:number,search?:any): P
         };
         return paginationData;
     } catch (error) {
-      const paginationData: PaginationData= {
-        record:[],
-        totalRecord:0
-      };
       console.error('Error fetching students:', error);
-      return paginationData;
+      return {} as PaginationData;
     }
 };
 
@@ -63,24 +59,9 @@ export const getStudentById = async (id:number): Promise<studentDTO> => {
           })) : []
       };
       return students;
-  } catch (error) {
-      const students: studentDTO={
-        studentId: 0,
-        studentName: '',
-        address:  '',
-        age: 0,
-        gender:'',
-        hobbies: '',
-        city:  '',
-        state: '',
-        pincode: 0,
-        image: '',
-        stateId:0,
-        cityId:0,
-        studClass:0,
-      };
+  } catch (error) {  
     console.error('Error fetching students:', error);
-    return students;
+    return {} as studentDTO;
   }
 }
 export const getState=async() :Promise<OptionType[]>=>{  

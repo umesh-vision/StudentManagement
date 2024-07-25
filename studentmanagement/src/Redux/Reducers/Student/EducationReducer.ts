@@ -38,17 +38,8 @@ export const getEduById =async(id:any): Promise<EducationDTO>=> {
     return education;  
     
   } 
-  catch (error){
-    const education:EducationDTO={
-      eduId:0,
-      university:null,
-      degree:null,
-      fromDate:null,
-      toDate:null,
-      isStudy:false,
-      percentage:0
-    };
-    return education;
+  catch (error){  
+    return {} as EducationDTO;
   }
 };
 
