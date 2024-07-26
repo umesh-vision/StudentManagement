@@ -2,12 +2,14 @@ import axios from "axios";
 import { getCookie } from "../../../services/cookie";
 import { PostDTO } from "../../../services/IPost";
 import moment from "moment";
+import toast from "react-hot-toast";
 
-export const addUpdatePost=async(form:any):Promise<boolean>=>{    
+export const addUpdatePost=async(form:any):Promise<boolean>=>{      
     let status=false;
     let model ={      
       type:"Default",
       description: form.description,
+      postId:form.postId,
       insertPersonId: await getCookie("userId"),
       lstImages:form.images
     }
@@ -25,9 +27,11 @@ export const addUpdatePost=async(form:any):Promise<boolean>=>{
     .then(async(res) => { 
       if(res.status===200){ 
         status=true;   
+        toast.success('Post Saved successfully!');
       } 
     })
     .catch((err) => {  
+       toast.error('Somthing went wrong!');  
        console.log(err)
        status=false;
     }); 
@@ -73,7 +77,75 @@ export const getPostList=async():Promise<PostDTO[]>=>{
     return post;  
   }
   catch(erro){
+    toast.error('Somthing went wrong!');  
     return [] as PostDTO[];
   }
+
+}
+
+export const onEditAPI=async(id:any):Promise<PostDTO>=>{
+  try{
+    const userId=await getCookie("userId");
+    const response=await axios.get(`${process.env.REACT_APP_BASE_URL}Student/post/get_by_id?postId=${id}&userId=${userId}`);
+    const post:PostDTO ={
+      PostId:response.data.data.postId,
+      Type: response.data.data.type,
+      Description:response.data.data.description,
+      InsertPersonId:response.data.data.insertPersonId,
+      Create_Person:response.data.data.create_Person,
+      UpdatePersonId:response.data.data.updatePersonId,
+      Person_Photo:response.data.data.person_Photo,
+      Created_on:response.data.data.created_on?moment(response.data.data.created_on).format("MMM Do YYYY, h:mm:ss A"):null,
+      Updated_on:response.data.data.updated_on?moment(response.data.data.updated_on).format("MMM Do YYYY, h:mm:ss A"):null,
+      lstImages:response.data.data.lstImages !== null ? response.data.data.lstImages.map((img: any) => ({
+        postImageId:img.postImageId,
+        image:img.image, 
+        isCopy:img.isCopy    
+      })) : [], 
+      TotalLikes:response.data.data.totalLikes,
+      TotalComments:response.data.data.totalComments,
+      IsLiked:response.data.data.isLiked 
+    }
+    return post;
+  }
+  catch(e){
+    console.log(e)
+    toast.error('Somthing went wrong!');  
+    return {} as PostDTO;
+  }
+}
+
+export const onDeleteAPI=async(id:any):Promise<boolean>=>{
+  let status=false;   
+  await axios.delete(`${process.env.REACT_APP_BASE_URL}Student/post/delete/${id}`)
+  .then(async(res) => {            
+    if(res.status===200){        
+      status=true;
+      toast.success('Post Deleted successfully!');
+    } 
+  })
+  .catch((err) => {      
+     toast.error('Somthing went wrong!');      
+     console.log(err)
+     status=false;
+  }); 
+  return status;
+
+}
+
+
+export const onDeleteImageAPI=async(id:any):Promise<boolean>=>{
+  let status=false;   
+  await axios.delete(`${process.env.REACT_APP_BASE_URL}Student/post/image/delete/${id}`)
+  .then(async(res) => {            
+    if(res.status===200){        
+      status=true;     
+    } 
+  })
+  .catch((err) => {            
+     console.log(err)
+     status=false;
+  }); 
+  return status;
 
 }

@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import Slider from 'react-slick';
-import { Button, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Button} from 'react-bootstrap';
 import Lightbox from "yet-another-react-lightbox";
-import { getPostList } from '../../../../Redux/Reducers/Student/StudentPostReducer';
-
+import { DeleteModel } from '../common/DeleteModel';
 
 type Props = {
-  postDtos:any[]
+  postDtos:any[],
+  handleDelete:(e:any)=>void;
+  handleEdit:(e:any)=>void;
 };
 
 interface IState {
   postDtos: any[],
   isShow: boolean,
   lstImg: any[],
-  menu:string
+  showDelete:boolean,
+  postId:number
 }
 
 class Post extends Component<Props, IState> {
@@ -23,11 +25,12 @@ class Post extends Component<Props, IState> {
       postDtos: [],
       isShow: false,
       lstImg: [],
-      menu:"none",
+      showDelete:false,
+      postId:0
     }
   }
 
-  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<IState>, snapshot?: any): void {    debugger
+  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<IState>, snapshot?: any): void {    
     if(prevProps.postDtos!==this.state.postDtos){
       this.setState({ postDtos: this.props.postDtos })
     }
@@ -42,8 +45,22 @@ class Post extends Component<Props, IState> {
     this.setState({ isShow: false, lstImg: [] });
   }
  
-  handleMenu=()=>{
-   this.setState({menu:this.state.menu==="none"?"inline":"none"})
+  onEdit=(e:any)=>{
+     this.props.handleEdit(e);
+  }
+
+  onCloseDeleteModel=()=>{    
+    this.setState({showDelete:false})
+  }
+
+  onDelete=(e:any,status:boolean)=>{
+    if(status){
+      this.props.handleDelete(this.state.postId);
+      this.setState({showDelete:false})
+    }else{
+      this.setState({postId:e.target.id})
+      this.setState({showDelete:true})
+    }
   }
 
   render() {
@@ -74,21 +91,14 @@ class Post extends Component<Props, IState> {
                         <span className="h5"><b>Name: </b>{post.create_Person}</span><br />
                         <span className="h6">Post Time: {post.updated_on === null ? post.created_on : post.updated_on}</span>
                       </div>
-                      <div className='col-md-1'>    
-                        <DropdownButton id="dropdown-basic-button" title="Dropdown button">
-                          <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-                          <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-                          <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-                        </DropdownButton>      
-                        <div className="dropdown show">                       
-                          <svg xmlns="http://www.w3.org/2000/svg" className="btn btn-secondary dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  viewBox="0 0 128 512" width={"8px"} height={"50px"}>
+                      <div className='col-md-1'> 
+                          <svg id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 128 512" width={"8px"} height={"50px"}>
                               <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
                           </svg>
-                          <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <span className="dropdown-item" >Edit</span>
-                            <span className="dropdown-item" >Delete</span>                           
+                          <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <span className="dropdown-item" id={post.postId} onClick={this.onEdit}>Edit</span>
+                            <span className="dropdown-item" id={post.postId} onClick={(event)=>this.onDelete(event,false)}>Delete</span>                           
                           </div>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -98,15 +108,21 @@ class Post extends Component<Props, IState> {
                         <div dangerouslySetInnerHTML={{ __html: post.description }} />
                       </div>
                       <div className='col-md-2' />
-                      <div className='slider-container col-md-8'>
-                        {post.lstImages.length > 0 &&
-                          <Slider {...settings}>
-                            {post.lstImages.map((img: any) => (
-                              <div key={img.postImageId}>
-                                <img src={img.image} alt='' height={"400px"} width={"100%"} />
-                              </div>
-                            ))}
-                          </Slider>
+                      <div className='slider-container col-md-8'>                      
+                        { post.lstImages.length > 0 &&
+                          (post.lstImages.length > 1 ? (
+                            <Slider {...settings}>
+                              {post.lstImages.map((img: any) => (
+                                <div key={img.postImageId}>
+                                  <img src={img.image} alt='' height={"100%"} width={"100%"} />
+                                </div>
+                              ))}
+                            </Slider>
+                          ) : (
+                            <div>
+                              <img src={post.lstImages[0].image} alt='' height={"100%"} width={"100%"} />
+                            </div>
+                          ))
                         }
                       </div>
                       <div className='col-md-2' />
@@ -131,6 +147,9 @@ class Post extends Component<Props, IState> {
             slides={this.state.lstImg}
           />
         )}
+        {this.state.showDelete &&
+          <DeleteModel title='Post' onDelete={this.onDelete} isShowDeleteModel={this.state.showDelete} onclose={this.onCloseDeleteModel} />
+        }
       </>
     )
   }

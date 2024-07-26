@@ -87,3 +87,39 @@ body{
 .slick-next:before {
   color:  silver !important;
 }
+
+
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+
+.postImage {
+  filter: blur(0); /* Initial state, no blur */
+  transition: filter 0.3s ease; /* Smooth transition */
+}
+
+.delete-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0; /* Initially hidden */
+  background-color: rgba(92, 41, 233, 0.5); /* Semi-transparent overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-overlay .svg {
+  cursor: pointer;
+}
+
+.image-container:hover .postImage {
+  filter: blur(5px);
+}
+
+.image-container:hover .delete-overlay {
+  opacity: 1;
+}
