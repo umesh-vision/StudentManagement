@@ -4,7 +4,8 @@ import { Button } from 'react-bootstrap';
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { DeleteModel } from '../common/DeleteModel';
-import { getPostList } from '../../../../Redux/Reducers/Student/StudentPostReducer';
+import { getPostList, onLikeUnlikePost } from '../../../../Redux/Reducers/Student/StudentPostReducer';
+import LikeButton from './LikeButton';
 
 type Props = {
   postDtos: any[],
@@ -131,7 +132,14 @@ class Post extends Component<Props, IState> {
       }
     }
   }
-
+ 
+  handleLike=async(id:number)=>{
+    const result=await onLikeUnlikePost(id);
+    if(result){
+      const response=await getPostList(1);
+      await this.replacePostDtos(response);
+    }
+  }
   render() {
     const settings = {
       className: "",
@@ -203,7 +211,9 @@ class Post extends Component<Props, IState> {
                       }
                     </div>
                   </div>
-                  <div className="card-footer"></div>
+                  <div className="card-footer">
+                    <LikeButton postId={post.postId} handleLike={this.handleLike} isLiked={post.isLiked} totalLikes={post.totalLikes} />
+                  </div>
                 </div>
               </div>
             ))}
@@ -215,7 +225,7 @@ class Post extends Component<Props, IState> {
           <Lightbox
             open={isShow}
             close={this.closeLightbox}
-            slides={lstImg}            
+            slides={lstImg}   
           />
         )}
         {this.state.showDelete &&

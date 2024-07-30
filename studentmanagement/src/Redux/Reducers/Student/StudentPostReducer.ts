@@ -133,7 +133,6 @@ export const onDeleteAPI=async(id:any):Promise<boolean>=>{
 
 }
 
-
 export const onDeleteImageAPI=async(id:any):Promise<boolean>=>{
   let status=false;   
   await axios.delete(`${process.env.REACT_APP_BASE_URL}Student/post/image/delete/${id}`)
@@ -148,4 +147,25 @@ export const onDeleteImageAPI=async(id:any):Promise<boolean>=>{
   }); 
   return status;
 
+}
+
+export const onLikeUnlikePost=async(id:number):Promise<boolean>=>{   
+  try{
+    const userId =await getCookie("userId");
+    await axios(`${process.env.REACT_APP_BASE_URL}Student/post/like?PostId=${id}&UserId=${userId}`)
+    return true
+  }
+  catch(ex){
+    return false;
+  }
+}
+
+export const getUserNamesByPostId=async(id:number):Promise<string[]>=>{
+  try{    
+    const response=await axios(`${process.env.REACT_APP_BASE_URL}Student/post/get_liked_user?PostId=${id}`)
+    return response.data.user;
+  }
+  catch(ex){
+    return [];
+  }
 }

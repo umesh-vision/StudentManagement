@@ -11,7 +11,7 @@ export interface PostDTO {
     lstImages?:Images[] 
     TotalLikes:number
     TotalComments:number
-    IsLiked:boolean
+    IsLiked:boolean,  
 }
 
 export interface Images{
