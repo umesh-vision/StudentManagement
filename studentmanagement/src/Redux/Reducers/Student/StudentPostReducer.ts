@@ -38,12 +38,13 @@ export const addUpdatePost=async(form:any):Promise<boolean>=>{
     return status;
 }
 
-export const getPostList=async():Promise<PostDTO[]>=>{
+export const getPostList=async(pageSize?:number):Promise<PostDTO[]>=>{
     try{
     let model={
-      pageSize:0,
+      pageSize:pageSize!==undefined?pageSize:1,
       userId:await getCookie("userId")
     }
+    
     var authOptions = {
       method: "get",
       url:`${process.env.REACT_APP_BASE_URL}Student/post/get?pageSize=${model.pageSize}&userId=${model.userId}`,
@@ -54,7 +55,7 @@ export const getPostList=async():Promise<PostDTO[]>=>{
       json: true,
     };    
     const response=await axios(authOptions)
-    const post: PostDTO[] = response.data.data.map((post: any) => ({
+    let post: PostDTO[] = response.data.data.map((post: any) => ({
       postId :post.postId,
       type: post.type,
       description:post.description,
@@ -73,7 +74,6 @@ export const getPostList=async():Promise<PostDTO[]>=>{
       totalComments:post.totalComments,
       isLiked:post.isLiked 
     }));
-    console.log(post);
     return post;  
   }
   catch(erro){

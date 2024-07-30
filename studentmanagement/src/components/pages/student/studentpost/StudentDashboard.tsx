@@ -95,8 +95,8 @@ class StudentDashboard extends Component<Props,IState>{
             if (index !== -1) {
                 images.splice(index, 1);
                 this.setState({editImage: images});
-            }
-           await this.componentDidMount();
+            }           
+           await this.componentDidMount();       
         }
     }
 
@@ -104,7 +104,7 @@ class StudentDashboard extends Component<Props,IState>{
         const response= await onDeleteAPI(id)
         if(response) {
             this.setState({postId:0});   
-            this.setState({editImage:[]}); 
+            this.setState({editImage:[]});   
             await this.componentDidMount();
         }
     }
@@ -239,7 +239,7 @@ class StudentDashboard extends Component<Props,IState>{
                     <Button onClick={this.onModel}>Post</Button>                                         
                 </div> 
                 <div className='col-md-12'>
-                    <Post postDtos={postDTO} handleEdit={this.onEdit} handleDelete={this.onDelete}/>
+                    <Post postDtos={postDTO} handleEdit={this.onEdit} handleDelete={this.onDelete} />
                 </div> 
               </div>
             </div>

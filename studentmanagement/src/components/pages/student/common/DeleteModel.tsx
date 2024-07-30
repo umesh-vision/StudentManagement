@@ -9,8 +9,8 @@ type props={
 }
 export class DeleteModel extends Component<props>{
 
-    onDeletePost=(e:any)=>{
-        this.props.onDelete(e,true)
+    onDeletePost=(e:any)=>{     
+       this.props.onDelete(e,true)
     }
 
     render(){

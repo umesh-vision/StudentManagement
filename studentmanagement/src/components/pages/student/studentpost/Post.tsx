@@ -1,21 +1,25 @@
-import { Component } from 'react';
+import  { Component } from 'react';
 import Slider from 'react-slick';
-import { Button} from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
 import { DeleteModel } from '../common/DeleteModel';
+import { getPostList } from '../../../../Redux/Reducers/Student/StudentPostReducer';
 
 type Props = {
-  postDtos:any[],
-  handleDelete:(e:any)=>void;
-  handleEdit:(e:any)=>void;
+  postDtos: any[],
+  handleDelete: (e: any) => void;
+  handleEdit: (e: any) => void;
 };
 
 interface IState {
   postDtos: any[],
   isShow: boolean,
   lstImg: any[],
-  showDelete:boolean,
-  postId:number
+  showDelete: boolean,
+  postId: number,
+  isLoading: boolean,
+  page: number,
 }
 
 class Post extends Component<Props, IState> {
@@ -25,14 +29,44 @@ class Post extends Component<Props, IState> {
       postDtos: [],
       isShow: false,
       lstImg: [],
-      showDelete:false,
-      postId:0
+      showDelete: false,
+      postId: 0,
+      isLoading: false,
+      page:1
+    }
+  }
+  
+  async componentDidMount() {
+    window.addEventListener('scroll', this.handleScroll);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll);
+  }
+
+  async componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<IState>, snapshot?: any){     
+    if (prevProps.postDtos !== this.props.postDtos ) {
+      this.replacePostDtos(this.props.postDtos);
     }
   }
 
-  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<IState>, snapshot?: any): void {    
-    if(prevProps.postDtos!==this.state.postDtos){
-      this.setState({ postDtos: this.props.postDtos })
+  replacePostDtos = (newPostDtos: any[]) => {
+    if(this.state.postDtos.length>0){
+      const ids = new Set(newPostDtos.map(post => post.postId));
+      const distinctPost = this.state.postDtos.filter(post => ids.has(post.postId));
+      const updatedPostDtos = distinctPost.map(post => {
+        const newPost = newPostDtos.find(newPost => newPost.postId === post.postId);
+        return newPost ? newPost : post;
+      });    
+      this.setState({ postDtos: [...updatedPostDtos] });
+    }
+    else{
+      const updatedPostDtos = this.state.postDtos.map(post => {
+        const newPost = newPostDtos.find(newPost => newPost.postId === post.postId);
+        return newPost ? newPost : post;
+      });
+      const newPosts = newPostDtos.filter(newPost => !this.state.postDtos.some(post => post.postId === newPost.postId));
+      this.setState({ postDtos: [...updatedPostDtos, ...newPosts] });
     }
   }
 
@@ -41,31 +75,67 @@ class Post extends Component<Props, IState> {
     this.setState({ lstImg: imageList, isShow: true });
   }
 
+  
   closeLightbox = () => {
-    this.setState({ isShow: false, lstImg: [] });
-  }
- 
-  onEdit=(e:any)=>{
-     this.props.handleEdit(e);
+    this.setState({ isShow: false, lstImg: []});
   }
 
-  onCloseDeleteModel=()=>{    
-    this.setState({showDelete:false})
+
+  onEdit = (e: any) => {
+    this.props.handleEdit(e);
   }
 
-  onDelete=(e:any,status:boolean)=>{
-    if(status){
-      this.props.handleDelete(this.state.postId);
-      this.setState({showDelete:false})
-    }else{
-      this.setState({postId:e.target.id})
-      this.setState({showDelete:true})
+  onCloseDeleteModel = () => {
+    this.setState({ showDelete: false })
+  }
+
+  onDelete = async(e: any, status: boolean) => {
+    if (status) {  
+       this.props.handleDelete(this.state.postId);
+       this.setState({ showDelete: false })
+    } else {
+      this.setState({ postId: e.target.id })
+      this.setState({ showDelete: true })
+    }
+  }
+
+  loadPosts=async() =>{
+    const { page, postDtos } =this.state;
+    this.setState({ isLoading: true });
+    try {
+      const result = await getPostList(page);
+      if (result.length > 0) {
+        this.setState({
+          postDtos: [...postDtos, ...result],
+          page: page + 1,
+          isLoading: false
+        });
+      } else {
+        this.setState({
+          page:1,
+          isLoading: false
+        });
+        this.loadPosts()
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      this.setState({ isLoading: false });
+    }
+  }
+
+  handleScroll=async()=> {
+    if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight) {
+      const { isLoading } = this.state;
+      if (!isLoading) {
+        this.loadPosts()
+      }
     }
   }
 
   render() {
     const settings = {
       className: "",
+      lazy:true,
       infinite: true,
       slidesToShow: 1,
       slidesToScroll: 1,
@@ -73,32 +143,32 @@ class Post extends Component<Props, IState> {
       prevArrow: <div className="slick-arrow slick-prev" />,
       nextArrow: <div className="slick-arrow slick-next" />,
     };
-
+    const { lstImg, isShow, postDtos ,isLoading } = this.state;
     return (
       <>
         <div className='row mt-2'>
           <div className='col-md-2'></div>
           <div className='col-md-8'>
-            {this.state.postDtos.map((post, index) => (
+            {postDtos.map((post, index) => (
               <div className="card text-bg-light mt-2" key={index} style={{ backgroundColor: "" }}>
                 <div>
                   <div className="card-header">
                     <div className='row'>
                       <div className='col-md-1'>
-                        <img src={post.person_Photo} style={{ borderRadius: "50%" }} alt="" width={"50px"} height={"50px"}></img>
+                        <img src={post.person_Photo} style={{ borderRadius: "50%" }} alt="" width={"50px"} height={"50px"} />
                       </div>
                       <div className='col-md-10 text-black'>
                         <span className="h5"><b>Name: </b>{post.create_Person}</span><br />
                         <span className="h6">Post Time: {post.updated_on === null ? post.created_on : post.updated_on}</span>
                       </div>
-                      <div className='col-md-1'> 
-                          <svg id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 128 512" width={"8px"} height={"50px"}>
-                              <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
-                          </svg>
-                          <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <span className="dropdown-item" id={post.postId} onClick={this.onEdit}>Edit</span>
-                            <span className="dropdown-item" id={post.postId} onClick={(event)=>this.onDelete(event,false)}>Delete</span>                           
-                          </div>
+                      <div className='col-md-1'>
+                        <svg id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512" width={"8px"} height={"50px"}>
+                          <path d="M64 360a56 56 0 1 0 0 112 56 56 0 1 0 0-112zm0-160a56 56 0 1 0 0 112 56 56 0 1 0 0-112zM120 96A56 56 0 1 0 8 96a56 56 0 1 0 112 0z" />
+                        </svg>
+                        <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                          <span className="dropdown-item" id={post.postId} onClick={this.onEdit}>Edit</span>
+                          <span className="dropdown-item" id={post.postId} onClick={(event) => this.onDelete(event, false)}>Delete</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -108,8 +178,8 @@ class Post extends Component<Props, IState> {
                         <div dangerouslySetInnerHTML={{ __html: post.description }} />
                       </div>
                       <div className='col-md-2' />
-                      <div className='slider-container col-md-8'>                      
-                        { post.lstImages.length > 0 &&
+                      <div className='slider-container col-md-8'>
+                        {post.lstImages.length > 0 &&
                           (post.lstImages.length > 1 ? (
                             <Slider {...settings}>
                               {post.lstImages.map((img: any) => (
@@ -137,14 +207,15 @@ class Post extends Component<Props, IState> {
                 </div>
               </div>
             ))}
+            {isLoading && <h3>Post Loading...</h3>}
           </div>
-          <div className='col-md-2'></div>
+          <div className='col-md-2'></div>       
         </div>
-        {this.state.isShow && (        
+        {this.state.isShow && (
           <Lightbox
-            open={this.state.isShow}
+            open={isShow}
             close={this.closeLightbox}
-            slides={this.state.lstImg}
+            slides={lstImg}            
           />
         )}
         {this.state.showDelete &&

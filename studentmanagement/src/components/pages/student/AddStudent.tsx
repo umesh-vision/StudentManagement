@@ -6,6 +6,7 @@ import { deleteStudent, getCityByStateId, getState, saveStudent } from '../../..
 import { onChange, validationForm } from '../../../utils/util';
 import Validation from '../../../utils/validation';
 import toast from 'react-hot-toast';
+import { DeleteModel } from './common/DeleteModel';
 
 type ModalProps = { 
     handleClose: (isDeleted?:boolean) => void;
@@ -178,7 +179,7 @@ export class StudentModel extends Component<ModalProps,student>{
         if(id>0)this.setState({cityId:{name:"cityId",value:id}});
     }
 
-    onDelete=async()=>{
+    onDelete=async(e?:any,status?:boolean)=>{
         let result=await deleteStudent(this.state.studentId.value);
         if(result){
             toast.success('Deleted successfully!');
@@ -213,22 +214,14 @@ export class StudentModel extends Component<ModalProps,student>{
         const {studentName, address,age,gender,city,state,pincode,image,submitted,studClass} = this.state;
         return(
             <div>
-                <Modal show={this.props.studentState?.isShowDeleteModel} onHide={this.onclose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Delete</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>  
-                        <div className='col-md-10'>
-                            <div>
-                                <strong><p>Are you sure you want to delete this Student?</p></strong>
-                            </div>
-                            <div style={{paddingTop:'10px'}}>
-                                <Button  style={{marginLeft:'5px'}} onClick={this.onDelete}>Yes</Button>  
-                                <Button style={{marginLeft:'5px'}} onClick={()=>this.onclose()}>No</Button>                                   
-                            </div> 
-                        </div>
-                    </Modal.Body>
-                </Modal>
+                {
+                    this.props.studentState?.isShowDeleteModel && 
+                    <DeleteModel   onclose={this.onclose}
+                        onDelete={this.onDelete}  
+                        isShowDeleteModel={this.props.studentState?.isShowDeleteModel} 
+                        title="Student"
+                    />
+                }           
 
                 <Modal show={this.props.studentState?.isShowAddEditModel}  onHide={this.onclose}>
                     <Modal.Header closeButton>

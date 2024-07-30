@@ -19,7 +19,6 @@ import ViewStudentDetail from './components/pages/student/ViewStudentDetail';
 import StudentDashboard from './components/pages/student/studentpost/StudentDashboard';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "yet-another-react-lightbox/styles.css";
 
 type IProps={ 
   auth:AuthContextProps
