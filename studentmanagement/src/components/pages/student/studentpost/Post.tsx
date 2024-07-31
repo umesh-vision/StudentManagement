@@ -1,4 +1,4 @@
-import  { Component } from 'react';
+import React,{ Component } from 'react';
 import Slider from 'react-slick';
 import { Button } from 'react-bootstrap';
 import Lightbox from "yet-another-react-lightbox";
@@ -6,6 +6,8 @@ import "yet-another-react-lightbox/styles.css";
 import { DeleteModel } from '../common/DeleteModel';
 import { getPostList, onLikeUnlikePost } from '../../../../Redux/Reducers/Student/StudentPostReducer';
 import LikeButton from './LikeButton';
+import CommentButton from './CommentButton';
+import AddCommentArea from './AddCommentArea';
 
 type Props = {
   postDtos: any[],
@@ -21,6 +23,8 @@ interface IState {
   postId: number,
   isLoading: boolean,
   page: number,
+  isShowComment:boolean,
+  showEmojiPicker:boolean
 }
 
 class Post extends Component<Props, IState> {
@@ -33,16 +37,18 @@ class Post extends Component<Props, IState> {
       showDelete: false,
       postId: 0,
       isLoading: false,
-      page:1
+      page:1,
+      isShowComment:false,
+      showEmojiPicker:false
     }
   }
   
   async componentDidMount() {
-    window.addEventListener('scroll', this.handleScroll);
+    await window.addEventListener('scroll', this.handleScroll);
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleScroll);
+  async componentWillUnmount() {
+   await window.removeEventListener('scroll', this.handleScroll);
   }
 
   async componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<IState>, snapshot?: any){     
@@ -51,14 +57,15 @@ class Post extends Component<Props, IState> {
     }
   }
 
-  replacePostDtos = (newPostDtos: any[]) => {
+  replacePostDtos =async(newPostDtos: any[]) => {
     if(this.state.postDtos.length>0){
-      const ids = new Set(newPostDtos.map(post => post.postId));
-      const distinctPost = this.state.postDtos.filter(post => ids.has(post.postId));
-      const updatedPostDtos = distinctPost.map(post => {
+       const ids = await new Set(newPostDtos.map(post => post.postId));
+      const distinctPost = await this.state.postDtos.filter(post => ids.has(post.postId));
+      const updatedPostDtos = await distinctPost.map(post => {
         const newPost = newPostDtos.find(newPost => newPost.postId === post.postId);
         return newPost ? newPost : post;
       });    
+      console.log(updatedPostDtos)
       this.setState({ postDtos: [...updatedPostDtos] });
     }
     else{
@@ -136,10 +143,23 @@ class Post extends Component<Props, IState> {
   handleLike=async(id:number)=>{
     const result=await onLikeUnlikePost(id);
     if(result){
-      const response=await getPostList(1);
+      const response=await getPostList(1);   
       await this.replacePostDtos(response);
     }
   }
+
+  handleAddComment=async()=>{ 
+    const response=await getPostList(1);
+    await this.replacePostDtos(response);
+  }
+
+  onComment=async(id:number)=>{
+    this.setState((prevState) => ({  
+      isShowComment:!prevState.isShowComment
+    }))
+  }
+
+ 
   render() {
     const settings = {
       className: "",
@@ -151,7 +171,7 @@ class Post extends Component<Props, IState> {
       prevArrow: <div className="slick-arrow slick-prev" />,
       nextArrow: <div className="slick-arrow slick-next" />,
     };
-    const { lstImg, isShow, postDtos ,isLoading } = this.state;
+    const { lstImg, isShow, postDtos ,isLoading,isShowComment } = this.state;
     return (
       <>
         <div className='row mt-2'>
@@ -212,7 +232,25 @@ class Post extends Component<Props, IState> {
                     </div>
                   </div>
                   <div className="card-footer">
-                    <LikeButton postId={post.postId} handleLike={this.handleLike} isLiked={post.isLiked} totalLikes={post.totalLikes} />
+                    <div className='row'>
+                      <div className='col-md-12'>
+                        <div style={{float:"left"}}>
+                          <LikeButton postId={post.postId} handleLike={this.handleLike} isLiked={post.isLiked} totalLikes={post.totalLikes} />
+                        </div>
+                        <div style={{float:"right"}}>
+                          <CommentButton handleComment={this.onComment} postId={post.postId} totalComment={post.totalComments}/>
+                        </div>
+                      </div>
+                      <div className='col-md-12'  style={{"display":!isShowComment?"none":"inline"}}>          
+                        <div className="card text-bg-light mt-2">                 
+                          <div className="card-body">
+                          </div>
+                          <div className="card-footer">
+                             <AddCommentArea postId={post.postId} handleAddComment={this.handleAddComment}/>
+                          </div>
+                        </div>                  
+                      </div>
+                    </div>                                     
                   </div>
                 </div>
               </div>

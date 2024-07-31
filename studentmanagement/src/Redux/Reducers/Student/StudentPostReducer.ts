@@ -27,11 +27,11 @@ export const addUpdatePost=async(form:any):Promise<boolean>=>{
     .then(async(res) => { 
       if(res.status===200){ 
         status=true;   
-        toast.success('Post Saved successfully!');
+        toast.success('Post Saved successfully');
       } 
     })
     .catch((err) => {  
-       toast.error('Somthing went wrong!');  
+       toast.error('Somthing went wrong');  
        console.log(err)
        status=false;
     }); 
@@ -77,7 +77,7 @@ export const getPostList=async(pageSize?:number):Promise<PostDTO[]>=>{
     return post;  
   }
   catch(erro){
-    toast.error('Somthing went wrong!');  
+    toast.error('Somthing went wrong');  
     return [] as PostDTO[];
   }
 
@@ -110,7 +110,7 @@ export const onEditAPI=async(id:any):Promise<PostDTO>=>{
   }
   catch(e){
     console.log(e)
-    toast.error('Somthing went wrong!');  
+    toast.error('Somthing went wrong');  
     return {} as PostDTO;
   }
 }
@@ -121,11 +121,11 @@ export const onDeleteAPI=async(id:any):Promise<boolean>=>{
   .then(async(res) => {            
     if(res.status===200){        
       status=true;
-      toast.success('Post Deleted successfully!');
+      toast.success('Post Deleted successfully');
     } 
   })
   .catch((err) => {      
-     toast.error('Somthing went wrong!');      
+     toast.error('Somthing went wrong');      
      console.log(err)
      status=false;
   }); 
@@ -168,4 +168,35 @@ export const getUserNamesByPostId=async(id:number):Promise<string[]>=>{
   catch(ex){
     return [];
   }
+}
+
+export const addComment=async(id:number,comment:string):Promise<boolean>=>{
+  let model={
+    postId:id,
+    comment:comment,
+    userId:await getCookie("userId")
+  }
+  let status=false;
+  var authOptions = {
+    method: "post",
+    url: process.env.REACT_APP_BASE_URL+'Student/post/comment',
+    data:JSON.stringify(model),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    json: true,
+  };    
+  await axios(authOptions)       
+  .then(async(res) => { 
+    if(res.status===200){ 
+      status=true;   
+      toast.success('Comment Added successfully');
+    } 
+  })
+  .catch((err) => {  
+    toast.error('Somthing went wrong');  
+    console.log(err)
+    status=false;
+  }); 
+  return status;  
 }
