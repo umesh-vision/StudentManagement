@@ -5,7 +5,8 @@ import { addComment } from "../../../../Redux/Reducers/Student/StudentPostReduce
 
 type Props={
     postId:number;
-    handleAddComment:()=>void;
+    handleAddComment:(id:number,index:number)=>void;
+    index:number
 }
 interface IState{
     showEmojiPicker:boolean,
@@ -65,10 +66,11 @@ export default class AddCommentArea extends Component<Props, IState> {
       });
     };
      
-    addComment=async(postId:number)=>{
+    addComment=async(postId:number,index:number)=>{
       const result=await addComment(postId,this.state.commentText);
       if(result){
-        this.props.handleAddComment();
+        this.setState({commentText:""});
+        this.props.handleAddComment(postId,index);
       }     
     }
     
@@ -92,7 +94,7 @@ export default class AddCommentArea extends Component<Props, IState> {
                     />
                 </div>
                 <div className="col-md-2 mt-3">
-                  <Button onClick={()=>this.addComment(this.props.postId)}>Comment</Button>
+                  <Button onClick={()=>this.addComment(this.props.postId,this.props.index)}>Comment</Button>
                 </div>
             </div>
         )

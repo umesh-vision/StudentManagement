@@ -72,7 +72,9 @@ export const getPostList=async(pageSize?:number):Promise<PostDTO[]>=>{
       })) : [], 
       totalLikes:post.totalLikes,
       totalComments:post.totalComments,
-      isLiked:post.isLiked 
+      isLiked:post.isLiked,
+      isShowComment:false,
+      commentList:[]
     }));
     return post;  
   }
@@ -199,4 +201,32 @@ export const addComment=async(id:number,comment:string):Promise<boolean>=>{
     status=false;
   }); 
   return status;  
+}
+
+export const getCommentListByPostId=async(id:number):Promise<Comment[]>=>{
+  try{    
+    const response=await axios(`${process.env.REACT_APP_BASE_URL}Student/post/comment_list?PostId=${id}`)
+    const comment:Comment[] = response.data.data.map((comment: any) => ({
+      postCommentId:comment.postCommentId,
+      userId:comment.userId,
+      userName:comment.userName,
+      comment:comment.comment,
+      inserted_on:comment.inserted_on?moment(comment.inserted_on).format("MMM Do YYYY, h:mm:ss A"):null,
+    }))
+    return comment;
+  }
+  catch(ex){
+    return [] as Comment[];
+  }
+}
+
+
+export const deleteComment=async(id:number):Promise<boolean>=>{
+  try{    
+    await axios.delete(`${process.env.REACT_APP_BASE_URL}Student/post/comment/delete/${id}`)
+    return true;
+  }
+  catch(ex){
+    return false;
+  }
 }

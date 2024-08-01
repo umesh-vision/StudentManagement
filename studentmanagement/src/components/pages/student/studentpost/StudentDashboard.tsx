@@ -8,8 +8,8 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Validation from '../../../../utils/validation';
 import { addUpdatePost, getPostList, onDeleteAPI, onDeleteImageAPI, onEditAPI } from '../../../../Redux/Reducers/Student/StudentPostReducer';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
-import Post from './Post';
 import { Images } from '../../../../services/IPost';
+import { Post } from './Post';
 
 type Props = { 
     auth:AuthContextProps,

@@ -4,11 +4,13 @@ import { Button } from "react-bootstrap";
 type Props={
     postId:number;
     totalComment:number;
-    handleComment:(id:number)=>void;
+    index:number
+    handleComment:(id:number,index:number)=>void;
 }
 interface IState{
     totalComment:number
     postId:number
+    index:number
   
 }
 
@@ -17,35 +19,36 @@ export default class CommentButton extends Component<Props, IState> {
         super(props);
         this.state = {
          totalComment:0,
-         postId:0
+         postId:0,
+         index:0
         }
     }
 
     async componentDidMount() {
         this.setState({
             totalComment:this.props.totalComment,
-            postId:this.props.postId
+            postId:this.props.postId,
+            index:this.props.index
         });
     }
-
       
     async componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<IState>, snapshot?: any){
         if (prevProps.totalComment !== this.props.totalComment ) {
             this.setState({
                 totalComment:this.props.totalComment,
-                postId:this.props.postId,            
+                postId:this.props.postId,     
+                index:this.props.index       
             });
         }
     }
-
     
     render(){
-        const {totalComment,postId}=this.state
+        const {totalComment,postId,index}=this.state
         return(
             <>
              <Button 
                 className={'btn btn-secondary text-black'}     
-                onClick={()=>this.props.handleComment(postId)}  
+                onClick={(e)=>this.props.handleComment(postId,index)}  
              >
                 <strong>Comment </strong> 
                 <svg xmlns="http://www.w3.org/2000/svg" width="25px" height="20px" style={{verticalAlign:"sub"}} viewBox="0 0 512 512">

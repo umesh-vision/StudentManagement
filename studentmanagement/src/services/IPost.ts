@@ -12,10 +12,20 @@ export interface PostDTO {
     TotalLikes:number
     TotalComments:number
     IsLiked:boolean,  
+    IsShowComment?:boolean,
+    CommentList?:Comment[]
 }
 
 export interface Images{
     PostImageId?:number 
     Image:string 
     IsCopy?:boolean
+}
+
+export interface Comment{
+    postCommentId: number,
+    userId: number,
+    userName:string,
+    comment:string,
+    inserted_on:Date
 }

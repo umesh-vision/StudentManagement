@@ -6,7 +6,8 @@ type Props={
     postId:number;
     isLiked:boolean;
     totalLikes:number;
-    handleLike:(id:number)=>void;
+    handleLike:(id:number,index:number)=>void;
+    index:number;
 }
 interface IState{
     postId:number,
@@ -50,7 +51,7 @@ export default class LikeButton extends Component<Props, IState> {
         this.setState((prevState) => ({  
             isLiked:!prevState.isLiked
         }))
-        this.props.handleLike(id);
+        this.props.handleLike(id,this.props.index);
     }
 
     onButtonHover=async(postId:number)=>{
