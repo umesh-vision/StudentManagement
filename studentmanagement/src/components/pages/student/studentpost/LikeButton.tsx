@@ -35,7 +35,6 @@ export default class LikeButton extends Component<Props, IState> {
         });
     }
     
-     
     async componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<IState>, snapshot?: any){
         if (prevProps.isLiked !== this.props.isLiked ) {
             this.setState({
@@ -46,7 +45,6 @@ export default class LikeButton extends Component<Props, IState> {
         }
     }
 
-    
     onLikeButton=(id:number)=>{
         this.setState((prevState) => ({  
             isLiked:!prevState.isLiked

@@ -1,4 +1,4 @@
-import React,{ Component } from 'react';
+import { Component } from 'react';
 import Slider from 'react-slick';
 import { Button } from 'react-bootstrap';
 import Lightbox from "yet-another-react-lightbox";
@@ -24,7 +24,7 @@ interface IState {
   postId: number,
   isLoading: boolean,
   page: number,
-  showEmojiPicker:boolean,
+  showEmojiPicker:boolean
 }
 
 export class Post extends Component<Props, IState> {
@@ -48,7 +48,7 @@ export class Post extends Component<Props, IState> {
     this.onComment = this.onComment.bind(this); 
     this.handleAddComment = this.handleAddComment.bind(this); 
     this.onEditComment = this.onEditComment.bind(this); 
-    this.onDeleteComment = this.onDeleteComment.bind(this); 
+    this.onDeleteComment = this.onDeleteComment.bind(this);
 
     this.loadPosts = this.loadPosts.bind(this); 
     this.handleScroll = this.handleScroll.bind(this); 
@@ -64,11 +64,11 @@ export class Post extends Component<Props, IState> {
   }
 
   async componentWillUnmount() {
-   await window.removeEventListener('scroll', this.handleScroll);
+    await window.removeEventListener('scroll', this.handleScroll);
   }
 
   async componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<IState>, snapshot?: any){     
-    if (prevProps.postDtos !== this.props.postDtos ) {
+    if (prevProps.postDtos !== this.props.postDtos) {
       this.replacePostDtos(this.props.postDtos);
     }
   }
@@ -101,12 +101,10 @@ export class Post extends Component<Props, IState> {
     let imageList = img.map((i: any) => ({ src: i.image }));
     this.setState({ lstImg: imageList, isShow: true });
   }
-
   
   closeLightbox = () => {
     this.setState({ isShow: false, lstImg: []});
   }
-
 
   onEdit = (e: any) => {
     this.props.handleEdit(e);
@@ -167,12 +165,12 @@ export class Post extends Component<Props, IState> {
     }
   }
 
-  handleAddComment=async(id:any,index:number)=>{    
+  handleAddComment=async(id:any,index:number,commentIndex:number,commentId:number,comment:string)=>{    
     let response=await getCommentListByPostId(id);     
     this.setState((prevState) => {
       const updatedItems = [...prevState.postDtos];
       updatedItems[index] = { ...updatedItems[index],"commentList": response};
-      updatedItems[index] = { ...updatedItems[index],"totalComments": response.length};
+      updatedItems[index] = { ...updatedItems[index],"totalComments": response.length,"commentIndex":commentIndex,"commentId":commentId,"comment": comment};
       return { postDtos: updatedItems };
     });
   }
@@ -200,14 +198,18 @@ export class Post extends Component<Props, IState> {
       this.setState((prevState) => {
         const updatedItems = [...prevState.postDtos];  
         updatedItems[index]["commentList"].splice(commentIndex, 1);
-        updatedItems[index] = { ...updatedItems[index],"commentList": response};
+        updatedItems[index] = { ...updatedItems[index],"commentList": response,"commentIndex":commentIndex,"commentId":0,"comment": ""};
         return { postDtos: updatedItems };
       });
     }
   }
 
-  onEditComment=()=>{
-
+  onEditComment=async(postId:number,commentId:number,index:number,commentIndex:number,comment:string)=>{
+    this.setState((prevState) => {
+      const updatedItems = [...prevState.postDtos];
+      updatedItems[index] = { ...updatedItems[index],"commentIndex":commentIndex,"commentId":commentId,"comment": comment};
+      return { postDtos: updatedItems };
+    });
   }
 
   render() {
@@ -227,10 +229,10 @@ export class Post extends Component<Props, IState> {
         <div className='row mt-2'>
           <div className='col-md-2'></div>
           <div className='col-md-8'>
-            {postDtos.map((post, index) => (
-              <div className="card text-bg-light mt-2" key={index} style={{ backgroundColor: "" }}>
-                <div>
-                  <div className="card-header">
+            {
+              postDtos.map((post, index) => (
+              <div className="card text-bg-light mt-2" key={index}>
+                  <div className="card-header" style={{backgroundColor:"#768999"}}>
                     <div className='row'>
                       <div className='col-md-1'>
                         <img src={post.person_Photo} style={{ borderRadius: "50%" }} alt="" width={"50px"} height={"50px"} />
@@ -250,7 +252,7 @@ export class Post extends Component<Props, IState> {
                       </div>
                     </div>
                   </div>
-                  <div className="card-body">
+                  <div className="card-body" style={{backgroundColor:"#a7a7a7"}}>
                     <div className='row'>
                       <div className='col-md-12'>
                         <div dangerouslySetInnerHTML={{ __html: post.description }} />
@@ -281,7 +283,7 @@ export class Post extends Component<Props, IState> {
                       }
                     </div>
                   </div>
-                  <div className="card-footer">
+                  <div className="card-footer" style={{backgroundColor:"#768999"}}>
                     <div className='row'>
                       <div className='col-md-12'>
                         <div style={{float:"left"}}>
@@ -291,9 +293,9 @@ export class Post extends Component<Props, IState> {
                           <CommentButton handleComment={this.onComment} postId={post.postId} totalComment={post.totalComments} index={index}/>
                         </div>
                       </div>
-                      <div className='col-md-12'  style={{"display":!post.isShowComment?"none":"inline"}}>          
+                      <div className='col-md-12'  key={index} style={{"display":!post.isShowComment?"none":"inline"}}>          
                         <div className="card text-bg-light mt-2">                 
-                          <div className="card-body">                       
+                          <div className="card-body" style={{backgroundColor:"#e9ecef"}}>                       
                             {
                               post.isShowComment && post.commentList!==null &&                         
                               post.commentList.map((comment: any, commentIndex: number) => (                       
@@ -304,19 +306,19 @@ export class Post extends Component<Props, IState> {
                                   commentList={comment}
                                   commentIndex={commentIndex} 
                                   index={index}
+                                  onEditComment={this.onEditComment}
                                   onDeleteComment={this.onDeleteComment}
                                 /> 
                               ))
                             }   
                           </div>
-                          <div className="card-footer">
-                            <AddCommentArea postId={post.postId} handleAddComment={this.handleAddComment} index={index}/>
+                          <div className="card-footer" style={{backgroundColor:"rgb(201 201 201)"}}>
+                            <AddCommentArea postId={post.postId} commentIndex={post.commentIndex}  onEditComment={this.onEditComment} postCommentId={post.commentId} handleAddComment={this.handleAddComment} index={index} commentText={post.comment} />
                           </div>
                         </div>                  
                       </div>
                     </div>                                     
                   </div>
-                </div>
               </div>
             ))}
             {isLoading && <h3>Post Loading...</h3>}

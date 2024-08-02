@@ -74,7 +74,9 @@ export const getPostList=async(pageSize?:number):Promise<PostDTO[]>=>{
       totalComments:post.totalComments,
       isLiked:post.isLiked,
       isShowComment:false,
-      commentList:[]
+      commentList:[],
+      comment:"",
+      commentId:0
     }));
     return post;  
   }
@@ -172,9 +174,10 @@ export const getUserNamesByPostId=async(id:number):Promise<string[]>=>{
   }
 }
 
-export const addComment=async(id:number,comment:string):Promise<boolean>=>{
+export const addComment=async(id:number,postCommentId:number,comment:string):Promise<boolean>=>{
   let model={
     postId:id,
+    postCommentId:postCommentId===undefined?0:postCommentId,
     comment:comment,
     userId:await getCookie("userId")
   }

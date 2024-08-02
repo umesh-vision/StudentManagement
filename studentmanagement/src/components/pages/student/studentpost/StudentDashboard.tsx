@@ -4,12 +4,43 @@ import { Button, Modal } from 'react-bootstrap';
 import { AuthContextProps } from '../../../../services/IContext';
 import withNavigate from '../../../layouts/NavigationExtenstion';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import Validation from '../../../../utils/validation';
 import { addUpdatePost, getPostList, onDeleteAPI, onDeleteImageAPI, onEditAPI } from '../../../../Redux/Reducers/Student/StudentPostReducer';
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { Images } from '../../../../services/IPost';
 import { Post } from './Post';
+
+
+import {
+    ClassicEditor,
+	AccessibilityHelp,
+	AutoImage,
+	Autosave,
+	Base64UploadAdapter,
+	Bold,
+	CloudServices,
+	Essentials,
+	Heading,
+	ImageBlock,
+	ImageCaption,
+	ImageInline,
+	ImageInsert,
+	ImageInsertViaUrl,
+	ImageResize,
+	ImageStyle,
+	ImageTextAlternative,
+	ImageToolbar,
+	ImageUpload,
+	Italic,
+	Link,
+	LinkImage,
+	Mention,
+	Paragraph,
+	SelectAll,
+	Strikethrough,
+	Underline,
+	Undo
+} from 'ckeditor5';
 
 type Props = { 
     auth:AuthContextProps,
@@ -123,17 +154,18 @@ class StudentDashboard extends Component<Props,IState>{
         this.setState({showEmojiPicker:false})        
     }
 
-    onEditor=async(e:any,editor: any) => {
-        const data = editor.getData();
+    onEditor=(data: any) => {
+        debugger
+      //  const data = editor.getData();
         this.setState({data:data});     
     }
     
-    onInitialText=async(e:any) => {
+    onInitialText=(e:any) => {
         let value=e.target.value;
         this.setState({data:value});     
     }
 
-    onUploadImage=async(e:any)=>{ 
+    onUploadImage=(e:any)=>{ 
         e.preventDefault();
         if (e.target.files.length>=0) {
             for(let i=0;i<=e.target.files.length-1;i++){
@@ -167,9 +199,74 @@ class StudentDashboard extends Component<Props,IState>{
     }    
 
     render(){
+        const editorConfig = {
+            toolbar: {
+                items: [
+                    'undo',
+                    'redo',
+                    '|',
+                    'selectAll',
+                    '|',
+                    'heading',
+                    '|',
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    '|',
+                    'link',
+                    'insertImage',
+                    '|',
+                    'accessibilityHelp'
+                ],
+                shouldNotGroupWhenFull: false
+            },
+            plugins: [
+                AccessibilityHelp,
+                AutoImage,
+                Autosave,
+                Base64UploadAdapter,
+                Bold,
+                CloudServices,
+                Essentials,
+                Heading,
+                ImageBlock,
+                ImageCaption,
+                ImageInline,
+                ImageInsert,
+                ImageInsertViaUrl,
+                ImageResize,
+                ImageStyle,
+                ImageTextAlternative,
+                ImageToolbar,
+                ImageUpload,
+                Italic,
+                Link,
+                LinkImage,
+                Mention,
+                Paragraph,
+                SelectAll,
+                Strikethrough,
+                Underline,
+                Undo
+            ],
+            image: {
+                toolbar: [
+                    'toggleImageCaption',
+                    'imageTextAlternative',
+                    '|',
+                    'imageStyle:inline',
+                    'imageStyle:wrapText',
+                    'imageStyle:breakText',
+                    '|',
+                    'resizeImage'
+                ]
+            },
+        };
+    
         const {isShow,data,submitted,postDTO,editImage}=this.state;
         return(
-         <>
+         <> 
            <div className='container'>
               <div className='row'>
                 <Modal show={isShow} onHide={this.onClose} className='model'>
@@ -184,7 +281,10 @@ class StudentDashboard extends Component<Props,IState>{
                                     <div className='form-group col-md-12'>
                                         <CKEditor
                                             editor={ClassicEditor}
-                                            onChange={this.onEditor}  
+                                            onChange={(e,editor)=>{
+                                                this.onEditor(editor.getData());
+                                            }}       
+                                            config={editorConfig}                             
                                             data={data}                                
                                             ref={this.editorRef}                                                                       
                                         />

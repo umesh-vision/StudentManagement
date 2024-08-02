@@ -14,6 +14,9 @@ export interface PostDTO {
     IsLiked:boolean,  
     IsShowComment?:boolean,
     CommentList?:Comment[]
+    CommentIndex?:number
+    Comment?:string
+    CommentId?:number
 }
 
 export interface Images{
