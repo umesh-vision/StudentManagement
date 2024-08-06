@@ -20,9 +20,9 @@ export interface PostDTO {
 }
 
 export interface Images{
-    PostImageId?:number 
-    Image:string 
-    IsCopy?:boolean
+    postImageId?:any 
+    image:string 
+    isCopy?:boolean
 }
 
 export interface Comment{

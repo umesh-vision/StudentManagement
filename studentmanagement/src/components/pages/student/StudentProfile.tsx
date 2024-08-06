@@ -10,9 +10,6 @@ type prop={
 }
 
 class StudentProfile extends Component<prop,any>{ 
-    constructor(props: prop) {   
-        super(props);
-    }
    
     render(){  
         return(

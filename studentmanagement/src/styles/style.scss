@@ -1,0 +1,57 @@
+/* Define standard variables and values for website */
+$bgcolor: #e2e8f0;
+$textcolor: #1a202c;
+$fontsize: 18px;
+$aligen:center;
+
+/* Use the variables */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin-top:20px;
+    color: $textcolor;
+    text-align: left;
+    background-color:$bgcolor;    
+}         
+
+.delete-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0; 
+    background-color: rgba(92, 41, 233, 0.5); 
+    display: flex;
+    justify-content: $aligen;
+    align-items: $aligen;
+    .svg {
+        cursor: pointer;
+    }
+}
+
+
+.image-container {
+    position: relative;
+    display: inline-block;
+
+    .postImage {
+        filter: blur(0);
+        transition: filter 0.3s ease;
+    }     
+
+    :hover{
+        .postImage {
+            filter: blur(5px);
+        }
+        .delete-overlay {
+            opacity: 1;
+        }
+    }
+}
+  
+
+  

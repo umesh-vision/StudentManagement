@@ -9,11 +9,8 @@ import { addUpdatePost, getPostList, onDeleteAPI, onDeleteImageAPI, onEditAPI } 
 import EmojiPicker, { EmojiClickData } from 'emoji-picker-react';
 import { Images } from '../../../../services/IPost';
 import { Post } from './Post';
-
-
 import {
     ClassicEditor,
-	AccessibilityHelp,
 	AutoImage,
 	Autosave,
 	Base64UploadAdapter,
@@ -32,7 +29,6 @@ import {
 	ImageToolbar,
 	ImageUpload,
 	Italic,
-	Link,
 	LinkImage,
 	Mention,
 	Paragraph,
@@ -58,7 +54,8 @@ interface IState{
 }
 
 class StudentDashboard extends Component<Props,IState>{  
-    editorRef:any
+    editorRef:any;
+    private editorInstance: any = null; 
     constructor(props:Props) {   
         super(props);
         this.state = {
@@ -94,21 +91,32 @@ class StudentDashboard extends Component<Props,IState>{
 
     onSave=async(e:any)=>{
         e.preventDefault(); 
-        this.setState({submitted:true})   
-        let model={
-            description:this.state.data,
-            images:this.state.images,
-            postId:this.state.postId
-        }
-        if(this.state.data!==undefined && this.state.data !==""){
-            const result= await addUpdatePost(model);
-            if(result) {        
-              this.setState({postId:0});   
-              this.setState({editImage:[]}); 
-              this.onClose();
-              await this.componentDidMount();
+        this.setState({submitted:true}) 
+        setTimeout(async() => {     
+            const imgList = this.state.editImage.filter((item) => item.postImageId===0);  
+            if(imgList.length>0){
+                imgList.forEach((img) => {
+                    this.setState((prevState) => ({
+                      images: [...prevState.images, { image: img.image }],
+                    }));
+                });
+            }       
+        
+            let model={
+                description:this.state.data,
+                images:this.state.images,
+                postId:this.state.postId
             }
-        }
+            if(this.state.data!==undefined && this.state.data !==""){
+                const result= await addUpdatePost(model);
+                if(result) {        
+                this.setState({postId:0});   
+                this.setState({editImage:[]}); 
+                this.onClose();
+                await this.componentDidMount();
+                }
+            }
+        },2000);
     }
 
     onEdit=async(e:any)=>{
@@ -120,15 +128,30 @@ class StudentDashboard extends Component<Props,IState>{
     }
 
     onDeleteImage=async(id:any,index:any)=>{
-        const result=await onDeleteImageAPI(id);
-        if(result){
-            var images = [...this.state.editImage];
+        if(id===0){ 
+            var images = [...this.state.images];
             if (index !== -1) {
                 images.splice(index, 1);
-                this.setState({editImage: images});
-            }           
-           await this.componentDidMount();       
+                this.setState({images: images});
+            } 
+            await this.deleteImg(index);       
         }
+        else
+        {   
+            const result=await onDeleteImageAPI(id);
+            if(result){
+                await this.deleteImg(index);       
+                await this.componentDidMount();       
+            }    
+        }
+    }
+    
+    deleteImg=async(index:number)=>{
+        var images = [...this.state.editImage];
+        if (index !== -1) {
+            images.splice(index, 1);
+            this.setState({editImage: images});
+        }   
     }
 
     onDelete=async(id:number)=>{
@@ -154,10 +177,33 @@ class StudentDashboard extends Component<Props,IState>{
         this.setState({showEmojiPicker:false})        
     }
 
-    onEditor=(data: any) => {
-        debugger
-      //  const data = editor.getData();
-        this.setState({data:data});     
+    onEditor=async(data: any) => { 
+        const imageList: Images[] = [...this.state.editImage];
+        const figureRegex = /<figure.*?<\/figure>/g;
+        let match;     
+        while ((match = figureRegex.exec(data)) !== null ) {
+            const figureContent = match[0];
+            const srcStart = figureContent.indexOf('src="') + 5;
+            const srcEnd = figureContent.indexOf('"', srcStart);
+            const src = figureContent.substring(srcStart, srcEnd); 
+            const imageExists = imageList.some(img => img.image === src); 
+            if (!imageExists) {
+                setTimeout(async() => {             
+                    if (src.includes('data')) {    
+                        imageList.push({
+                            postImageId: 0,
+                            image: src,
+                            isCopy: false
+                        }); 
+                        this.setState({editImage:imageList})                            
+                        const outputString = data.replace(figureRegex, '');
+                        this.editorInstance.setData(outputString);            
+                    }                 
+                },1000);
+
+            }
+        } 
+        this.setState({data:data})
     }
     
     onInitialText=(e:any) => {
@@ -212,17 +258,13 @@ class StudentDashboard extends Component<Props,IState>{
                     'bold',
                     'italic',
                     'underline',
-                    'strikethrough',
-                    '|',
-                    'link',
-                    'insertImage',
-                    '|',
-                    'accessibilityHelp'
+                    'strikethrough',                         
+                    'insertImage'                 
+                
                 ],
                 shouldNotGroupWhenFull: false
             },
-            plugins: [
-                AccessibilityHelp,
+            plugins: [      
                 AutoImage,
                 Autosave,
                 Base64UploadAdapter,
@@ -240,8 +282,7 @@ class StudentDashboard extends Component<Props,IState>{
                 ImageTextAlternative,
                 ImageToolbar,
                 ImageUpload,
-                Italic,
-                Link,
+                Italic,            
                 LinkImage,
                 Mention,
                 Paragraph,
@@ -263,7 +304,7 @@ class StudentDashboard extends Component<Props,IState>{
                 ]
             },
         };
-    
+        
         const {isShow,data,submitted,postDTO,editImage}=this.state;
         return(
          <> 
@@ -285,7 +326,10 @@ class StudentDashboard extends Component<Props,IState>{
                                                 this.onEditor(editor.getData());
                                             }}       
                                             config={editorConfig}                             
-                                            data={data}                                
+                                            data={data}          
+                                            onReady={(editor) => {
+                                                this.editorInstance = editor;
+                                            }}                      
                                             ref={this.editorRef}                                                                       
                                         />
                                         <Validation fieldName='Input' fieldType='string' value={data} showValidation={submitted} />             
@@ -318,7 +362,7 @@ class StudentDashboard extends Component<Props,IState>{
                                                 </div>                                                  
                                             ))}                                      
                                         </div>    
-                                    }                       
+                                    }                                                         
                                 </div>
                                 <div style={{paddingTop:'10px',float:"right"}}>
                                     <Button type='submit'>Save</Button> 
