@@ -19,6 +19,7 @@ import ViewStudentDetail from './components/pages/student/ViewStudentDetail';
 import StudentDashboard from './components/pages/student/studentpost/StudentDashboard';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import AdminHome from './components/MUI/admin/AdminHome';
 
 type IProps={ 
   auth:AuthContextProps
@@ -36,7 +37,8 @@ class App extends Component<IProps>{
           <Routes>       
               <Route path='/' element={<Login />} />     
               <Route path='/pages/home' element={<Home />} />
-              {this.props.auth.state.isAuthenticated?(<Route path="/pages/admin/dashboard" element={<AdminDashboard />}/>):(<Route path="/" element={<Login />} />)}
+              {this.props.auth.state.isAuthenticated?(<Route path="/pages/admin/dashboard" element={<AdminDashboard />}/>):(<Route path="/" element={<Login />} />)} 
+              {this.props.auth.state.isAuthenticated?(<Route path="/MUI/admin/AdminHome" element={<AdminHome />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path="/pages/student/viewstudent" element={<ViewStudentDetail />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path='/pages/student/dashboard' element={<StudentDashboard />}/>):(<Route path="/" element={<Login />} />)}
               <Route path="*" element={<Navigate to="/" />} />

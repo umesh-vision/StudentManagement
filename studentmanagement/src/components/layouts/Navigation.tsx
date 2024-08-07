@@ -22,6 +22,7 @@ type NavbarProps={
 interface NavbarState {
   studentItems: NavItem[];
   adminItems: NavItem[];
+  adminItemsMUI: NavItem[];
   userName: string;
   url: string;
 }
@@ -35,9 +36,13 @@ class Navigation extends Component<NavbarProps, NavbarState> {
       studentItems:[
         { label: 'Student Board', path: '/pages/student/dashboard' },
         { label: 'Profile', path: '/pages/student/viewstudent' }
-       ],
-       adminItems:[
+      ],
+      adminItems:[
         { label: 'Admin Board',  path: '/pages/admin/dashboard' },
+        { label: 'Student Profile', path: '/pages/student/viewstudent' }
+      ],
+      adminItemsMUI:[
+        { label: 'Admin Home',  path: '/MUI/admin/AdminHome' },
         { label: 'Student Profile', path: '/pages/student/viewstudent' }
       ],
       userName: '',
@@ -106,7 +111,7 @@ class Navigation extends Component<NavbarProps, NavbarState> {
                     </>
                   ) : (
                     <>
-                      {this.state.adminItems.map((item) => (
+                      {this.state.adminItemsMUI.map((item) => (
                         <li className="nav-item" key={item.path}>
                           <Link className="nav-link" to={item.path} onClick={this.clearProfile}>
                             {item.label}

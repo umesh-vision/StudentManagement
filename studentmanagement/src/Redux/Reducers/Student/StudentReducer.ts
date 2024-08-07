@@ -3,7 +3,7 @@ import { OptionType, PaginationData,  studentDTO } from '../../../services/IComm
 
 export const getStudentList = async (page:number,pageSize:number,search?:any): Promise<PaginationData> => {
     try { 
-      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}Student/get?pageNumber=${page}&pageSize=${pageSize}&serchText=${search}`);
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}Student/get?pageNumber=${page+1}&pageSize=${pageSize}&serchText=${search}`);
       const students: studentDTO[] = response.data.data.map((student: any) => ({
             studentId: student.studentId,
             studentName: student.studentName,
@@ -23,7 +23,7 @@ export const getStudentList = async (page:number,pageSize:number,search?:any): P
               text: option.trim()
             })) : []
         }));
-     
+        
         const paginationData: PaginationData= {
           record:students,
           totalRecord:response.data.total

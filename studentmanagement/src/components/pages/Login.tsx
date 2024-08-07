@@ -92,7 +92,9 @@ class Login extends Component<LoginProps,IContext>{
       if(dto.status){
         this.props.auth.login(username, dto.role,dto.token,dto.userId);  
         toast.success('Logged in successfully!');
-        dto.role==='admin'?this.props.navigate('/pages/admin/dashboard'):this.props.navigate('/pages/student/dashboard');  
+       //dto.role==='admin'?this.props.navigate('/pages/admin/dashboard'):this.props.navigate('/pages/student/dashboard'); 
+        dto.role==='admin'?this.props.navigate('/MUI/admin/AdminHome'):this.props.navigate('/pages/student/dashboard');   
+
       }       
     }
   }
