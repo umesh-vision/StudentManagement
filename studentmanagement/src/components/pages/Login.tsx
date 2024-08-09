@@ -7,6 +7,7 @@ import { AuthContextProps } from '../../services/IContext';
 import { AuthReducersLogin } from '../../Redux/Reducers/auth/AuthReducersLogin';
 import Validation from '../../utils/validation';
 import toast from 'react-hot-toast';
+import { Snackbar } from '@material-ui/core';
 
 type LoginProps = { auth:AuthContextProps,  navigate: (path: string) => void;};
 interface IContext{
@@ -91,9 +92,14 @@ class Login extends Component<LoginProps,IContext>{
       let dto=await AuthReducersLogin(model);
       if(dto.status){
         this.props.auth.login(username, dto.role,dto.token,dto.userId);  
-        toast.success('Logged in successfully!');
+        <Snackbar     
+         open={true}   
+         message="Logged in successfully!"
+
+        />
+     
        //dto.role==='admin'?this.props.navigate('/pages/admin/dashboard'):this.props.navigate('/pages/student/dashboard'); 
-        dto.role==='admin'?this.props.navigate('/MUI/admin/AdminHome'):this.props.navigate('/pages/student/dashboard');   
+        dto.role==='admin'?this.props.navigate('/mui/admin/adminhome'):this.props.navigate('/mui/student/dashboard');   
 
       }       
     }

@@ -34,7 +34,7 @@ export interface PaginationData{
 
 export interface StudentState{
     isShowDeleteModel?: boolean
-    isShowAddEditModel?:boolean
+    isShowAddEditModel:boolean
     studentData?:studentDTO
     stateOption?:OptionType[]
     cityOption?:OptionType[]

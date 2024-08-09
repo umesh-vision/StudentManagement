@@ -216,7 +216,7 @@ export class StudentModel extends Component<ModalProps,student>{
             <div>
                 {
                     this.props.studentState?.isShowDeleteModel && 
-                    <DeleteModel   onclose={this.onclose}
+                    <DeleteModel  onclose={this.onclose}
                         onDelete={this.onDelete}  
                         isShowDeleteModel={this.props.studentState?.isShowDeleteModel} 
                         title="Student"

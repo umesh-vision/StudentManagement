@@ -16,10 +16,13 @@ import withAuth from './context/AuthContextExtenstion';
 import AdminDashboard from './components/pages/admin/AdminDashboard';
 import { Toaster } from 'react-hot-toast';
 import ViewStudentDetail from './components/pages/student/ViewStudentDetail';
-import StudentDashboard from './components/pages/student/studentpost/StudentDashboard';
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import AdminHome from './components/MUI/admin/AdminHome';
+import ViewStudent from './components/MUI/student/ViewStudent';
+import StudentDashboard from './components/MUI/student/StudentDashboard';
+import { Snackbar } from '@material-ui/core';
 
 type IProps={ 
   auth:AuthContextProps
@@ -32,14 +35,18 @@ class App extends Component<IProps>{
         <Toaster
           position="top-right"
           reverseOrder={false}
-        />       
+        /> 
+         
         <Layout navigation={
           <Routes>       
               <Route path='/' element={<Login />} />     
               <Route path='/pages/home' element={<Home />} />
               {this.props.auth.state.isAuthenticated?(<Route path="/pages/admin/dashboard" element={<AdminDashboard />}/>):(<Route path="/" element={<Login />} />)} 
-              {this.props.auth.state.isAuthenticated?(<Route path="/MUI/admin/AdminHome" element={<AdminHome />}/>):(<Route path="/" element={<Login />} />)}
+              {this.props.auth.state.isAuthenticated?(<Route path="/mui/admin/adminhome" element={<AdminHome />}/>):(<Route path="/" element={<Login />} />)}
+              {this.props.auth.state.isAuthenticated?(<Route path="/mui/student/viewstudent" element={<ViewStudent />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path="/pages/student/viewstudent" element={<ViewStudentDetail />}/>):(<Route path="/" element={<Login />} />)}
+             
+              {this.props.auth.state.isAuthenticated?(<Route path='/mui/student/dashboard' element={<StudentDashboard />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path='/pages/student/dashboard' element={<StudentDashboard />}/>):(<Route path="/" element={<Login />} />)}
               <Route path="*" element={<Navigate to="/" />} />
           </Routes>

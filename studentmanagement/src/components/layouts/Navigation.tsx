@@ -8,6 +8,7 @@ import { deleteAllCookies } from '../../services/cookie';
 import { AuthContextProps } from '../../services/IContext';
 import { getStudentById } from '../../Redux/Reducers/Student/StudentReducer';
 import toast from 'react-hot-toast';
+import { AppBar} from '@material-ui/core';
 
 interface NavItem {
   label: string;
@@ -21,6 +22,7 @@ type NavbarProps={
 
 interface NavbarState {
   studentItems: NavItem[];
+  studentItemsMUI:NavItem[];
   adminItems: NavItem[];
   adminItemsMUI: NavItem[];
   userName: string;
@@ -37,13 +39,17 @@ class Navigation extends Component<NavbarProps, NavbarState> {
         { label: 'Student Board', path: '/pages/student/dashboard' },
         { label: 'Profile', path: '/pages/student/viewstudent' }
       ],
+      studentItemsMUI:[
+        { label: 'Student Board', path: '/mui/student/dashboard' },
+        { label: 'Profile', path: '/pages/student/viewstudent' }
+      ],
       adminItems:[
         { label: 'Admin Board',  path: '/pages/admin/dashboard' },
         { label: 'Student Profile', path: '/pages/student/viewstudent' }
       ],
       adminItemsMUI:[
-        { label: 'Admin Home',  path: '/MUI/admin/AdminHome' },
-        { label: 'Student Profile', path: '/pages/student/viewstudent' }
+        { label: 'Admin Home',  path: '/mui/admin/adminhome' },
+        { label: 'Student Profile', path: '/mui/student/viewstudent' }
       ],
       userName: '',
       url: '',
@@ -101,22 +107,22 @@ class Navigation extends Component<NavbarProps, NavbarState> {
                 {user !== null ? (
                   user.role === 'student' ? (
                     <>
-                      {this.state.studentItems.map((item) => (
-                        <li className="nav-item" key={item.path}>
+                      {this.state.studentItemsMUI.map((item) => (
+                        <AppBar style={{backgroundColor:"#212529"}} position="static" key={item.path}>                    
                           <Link className="nav-link" to={item.path}>
                             {item.label}
                           </Link>
-                        </li>
+                        </AppBar>
                       ))}
                     </>
                   ) : (
                     <>
                       {this.state.adminItemsMUI.map((item) => (
-                        <li className="nav-item" key={item.path}>
-                          <Link className="nav-link" to={item.path} onClick={this.clearProfile}>
-                            {item.label}
-                          </Link>
-                        </li>
+                        <AppBar style={{backgroundColor:"#212529"}} className="nav-item" position="static"  key={item.path}>                         
+                            <Link className="nav-link" to={item.path} onClick={this.clearProfile}>
+                              {item.label}
+                            </Link>
+                        </AppBar>     
                       ))}
                     </>
                   )
