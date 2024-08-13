@@ -5,7 +5,7 @@ import withAuth from "../../../context/AuthContextExtenstion";
 import { getStudentById } from "../../../Redux/Reducers/Student/StudentReducer";
 import { getCookie } from "../../../services/cookie";
 import { AuthContextProps } from "../../../services/IContext";
-import { Box, Tab, Tabs, Typography } from "@material-ui/core";
+import { Box, Paper, Tab, Tabs, Typography } from "@material-ui/core";
 import EducationDetail from "../../pages/student/education/EducationDetail";
 import StudentProfile from "../../pages/student/StudentProfile";
 
@@ -93,34 +93,34 @@ class ViewStudent extends Component<Props,student>{
     render(){ 
         const { value,data } = this.state;
         return(
-          <>
-            <div className="container">
-               <div className="row">
-                  <div className="col-md-12">
-                    <Tabs
-                      value={value}
-                      onChange={this.tabChange}
-                      aria-label="basic tabs example"
-                    >
-                      <Tab label="Basic Information"  />
-                      {
-                        this.props.auth.state.user?.role==="student" &&
-                        <Tab label="Education Detail"  />
-                      }
-                    </Tabs>  
-                    <TabPanel value={value} index={0}>      
-                        <StudentProfile data={data} onBackList={this.onBackList} role={this.props.auth.state.user?.role} />
-                    </TabPanel>
+          <div className="container">
+              <div className="row">
+                <div className="col-md-12">
+                <Paper  elevation={5} >
+                  <Tabs
+                    value={value}
+                    onChange={this.tabChange}
+                    aria-label="basic tabs example"
+                  >
+                    <Tab label="Basic Information"  />
                     {
                       this.props.auth.state.user?.role==="student" &&
-                      <TabPanel value={value} index={1}>     
-                        <EducationDetail />
-                      </TabPanel>
+                      <Tab label="Education Detail"  />
                     }
-                  </div>
-               </div>
-            </div>
-          </>
+                  </Tabs>  
+                  <TabPanel value={value} index={0}>      
+                      <StudentProfile data={data} onBackList={this.onBackList} role={this.props.auth.state.user?.role} />
+                  </TabPanel>
+                  {
+                    this.props.auth.state.user?.role==="student" &&
+                    <TabPanel value={value} index={1}>     
+                      <EducationDetail />
+                    </TabPanel>
+                  }
+                  </Paper>
+                </div>
+              </div>
+          </div>         
         );
     }
 }

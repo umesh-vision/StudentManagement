@@ -8,7 +8,7 @@ import { deleteAllCookies } from '../../services/cookie';
 import { AuthContextProps } from '../../services/IContext';
 import { getStudentById } from '../../Redux/Reducers/Student/StudentReducer';
 import toast from 'react-hot-toast';
-import { AppBar} from '@material-ui/core';
+import { AppBar, Menu, MenuItem} from '@material-ui/core';
 
 interface NavItem {
   label: string;
@@ -27,6 +27,7 @@ interface NavbarState {
   adminItemsMUI: NavItem[];
   userName: string;
   url: string;
+  showMenu:boolean
 }
 
 const transformString = pipe(text,wrapWithH5,wrapWithB);
@@ -53,6 +54,7 @@ class Navigation extends Component<NavbarProps, NavbarState> {
       ],
       userName: '',
       url: '',
+      showMenu:false
     };
   }
   
@@ -74,7 +76,8 @@ class Navigation extends Component<NavbarProps, NavbarState> {
   }
 
   handleLogout = () => {
-    toast.success('Logged out successfully!');
+    this.props.auth.handleSnack("Logged out successfully");
+  //  toast.success('Logged out successfull');
     deleteAllCookies();
     this.props.auth.logout();
     this.props.navigate('/');
@@ -83,7 +86,11 @@ class Navigation extends Component<NavbarProps, NavbarState> {
   clearProfile = () => {
     this.props.auth.setProfile(undefined);  
   };
-
+  handleMenu=()=>{
+    this.setState((prevState)=>({
+      showMenu:!prevState.showMenu
+    }))
+  }
   render() {
     const { user } = this.props.auth.state;
     return (
@@ -108,7 +115,7 @@ class Navigation extends Component<NavbarProps, NavbarState> {
                   user.role === 'student' ? (
                     <>
                       {this.state.studentItemsMUI.map((item) => (
-                        <AppBar style={{backgroundColor:"#212529"}} position="static" key={item.path}>                    
+                        <AppBar style={{backgroundColor:"#212529",width:'75%'}} position="static" key={item.path}>                    
                           <Link className="nav-link" to={item.path}>
                             {item.label}
                           </Link>
@@ -118,12 +125,31 @@ class Navigation extends Component<NavbarProps, NavbarState> {
                   ) : (
                     <>
                       {this.state.adminItemsMUI.map((item) => (
-                        <AppBar style={{backgroundColor:"#212529"}} className="nav-item" position="static"  key={item.path}>                         
+                        <AppBar style={{backgroundColor:"#212529",width:'75%'}} className="nav-item" position="static"  key={item.path}>                         
                             <Link className="nav-link" to={item.path} onClick={this.clearProfile}>
                               {item.label}
                             </Link>
-                        </AppBar>     
+                        </AppBar>                          
                       ))}
+                      <Menu
+                        id="basic-menu"
+                        getContentAnchorEl={null} 
+                        anchorEl={null}
+                        open={this.state.showMenu}
+                        onClose={this.handleMenu}                       
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "right"
+                        }}
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right"
+                        }}    
+                        style={{ position: 'fixed', top: 55, right: 0 }}                
+                      >                    
+                        <MenuItem><Link to="/mui/timetable" className="nav-link">Time Table</Link></MenuItem>
+                        <MenuItem  className="btn btn-danger" onClick={this.handleLogout}>Logout</MenuItem>
+                      </Menu>     
                     </>
                   )
                 ) : (
@@ -132,19 +158,23 @@ class Navigation extends Component<NavbarProps, NavbarState> {
                   </li>
                 )}
               </ul>
-              {user && (
+              {user &&
                 <ul className="navbar-nav ms-auto">
-                  <li className="nav-item">
-                    <img src={this.state.url} className="nav-link" alt="User" width="60" height="40" style={{ padding:"1px", backgroundColor: 'white' }} />
-                  </li>
                   <li className="nav-item">
                     <label className="nav-link">{this.state.userName}</label>
                   </li>
                   <li className="nav-item">
-                    <button className="btn btn-danger" onClick={this.handleLogout}>Logout</button>
-                  </li>
+                    <img src={this.state.url} onClick={this.handleMenu} className="nav-link" alt="User" width="60" height="40" style={{ padding:"1px", backgroundColor: 'white' }} />
+                  </li>  
+                    
+                  {
+                    user.role === 'student' &&  
+                    <li className="nav-item">
+                      <button className="btn btn-danger" onClick={this.handleLogout}>Logout</button>
+                    </li>
+                  }
                 </ul>
-              )}
+              }
             </div>
           </div>
         </nav>

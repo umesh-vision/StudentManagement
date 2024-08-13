@@ -111,10 +111,10 @@ class StudentDashboard extends Component<Props,IState>{
             if(this.state.data!==undefined && this.state.data !==""){
                 const result= await addUpdatePost(model);
                 if(result) {        
-                this.setState({postId:0});   
-                this.setState({editImage:[]}); 
-                this.onClose();
-                await this.componentDidMount();
+                    this.setState({postId:0});   
+                    this.setState({editImage:[]}); 
+                    this.onClose();
+                    await this.componentDidMount();
                 }
             }
         },2000);

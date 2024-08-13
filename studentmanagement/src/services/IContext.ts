@@ -14,11 +14,14 @@ export interface AuthState {
   user: User | null;
   token:string;
   profile?: AdminState;
+  isSnackOpen:boolean;
+  snackMessage:string;
 }
 
 // Define the AuthContextProps interface
 export interface AuthContextProps {
   state: AuthState;
+  handleSnack:(snackMessage:string)=>void;
   login: (username: string, role: string,token:string,userId:number) => void;
   logout: () => void;
   setProfile:(state:any)=>void;

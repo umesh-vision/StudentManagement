@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@types/react-slick": "^0.23.13",
-    "sass": "^1.77.8"
+    "sass": "^1.77.8",
+    "tailwindcss": "^3.4.9"
   }
 }

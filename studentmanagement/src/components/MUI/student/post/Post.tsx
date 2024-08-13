@@ -233,7 +233,6 @@ export class Post extends Component<Props, IState> {
           <div className='col-md-8'>
             {
               postDtos.map((post, index) => (
-             
               <div>
                 <Card className="mt-2" key={index}>                  
                   <CardContent style={{backgroundColor:"#768999"}}>                   

@@ -10,7 +10,9 @@ class AuthProvider extends Component<{ children: ReactNode }, AuthState> {
     this.state = {
       isAuthenticated: false,
       user: null,
-      token:''
+      token:'',
+      isSnackOpen:false,
+      snackMessage:""
     };
   }
 
@@ -36,9 +38,17 @@ class AuthProvider extends Component<{ children: ReactNode }, AuthState> {
     });
   };
 
+  handleSnack=async(message:string)=>{   
+    this.setState((prevState)=>({
+      isSnackOpen:!prevState.isSnackOpen,
+      snackMessage:message
+    }));
+  }
+
   render() {
     const value = {
       state: this.state,
+      handleSnack:(message:string)=>this.handleSnack(message),
       login: this.login,
       logout: this.logout,
       setProfile: this.setProfile,

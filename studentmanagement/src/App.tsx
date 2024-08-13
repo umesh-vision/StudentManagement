@@ -23,12 +23,14 @@ import AdminHome from './components/MUI/admin/AdminHome';
 import ViewStudent from './components/MUI/student/ViewStudent';
 import StudentDashboard from './components/MUI/student/StudentDashboard';
 import { Snackbar } from '@material-ui/core';
+import TimeTable from './components/MUI/timetable/TimeTable';
 
 type IProps={ 
   auth:AuthContextProps
 }
 
 class App extends Component<IProps>{ 
+
   render() {
     return(  
       <>
@@ -36,7 +38,19 @@ class App extends Component<IProps>{
           position="top-right"
           reverseOrder={false}
         /> 
-         
+
+        <Snackbar
+          anchorOrigin={{
+           vertical: "top",
+           horizontal: "right"
+          }}
+       
+          open={this.props.auth.state.isSnackOpen}
+          autoHideDuration={5000}
+          onClose={()=>this.props.auth.handleSnack("")}
+          message={this.props.auth.state.snackMessage}
+        />
+
         <Layout navigation={
           <Routes>       
               <Route path='/' element={<Login />} />     
@@ -45,8 +59,9 @@ class App extends Component<IProps>{
               {this.props.auth.state.isAuthenticated?(<Route path="/mui/admin/adminhome" element={<AdminHome />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path="/mui/student/viewstudent" element={<ViewStudent />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path="/pages/student/viewstudent" element={<ViewStudentDetail />}/>):(<Route path="/" element={<Login />} />)}
-             
+            
               {this.props.auth.state.isAuthenticated?(<Route path='/mui/student/dashboard' element={<StudentDashboard />}/>):(<Route path="/" element={<Login />} />)}
+              {this.props.auth.state.isAuthenticated?(<Route path='/mui/timetable' element={<TimeTable />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path='/pages/student/dashboard' element={<StudentDashboard />}/>):(<Route path="/" element={<Login />} />)}
               <Route path="*" element={<Navigate to="/" />} />
           </Routes>
