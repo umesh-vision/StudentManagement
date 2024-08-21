@@ -153,9 +153,14 @@ class Navigation extends Component<NavbarProps, NavbarState> {
                     </>
                   )
                 ) : (
-                  <li className="nav-item">
-                    <Link to="/pages/home" className="nav-link">Home</Link>
-                  </li>
+                  <>
+                    <li className="nav-item">
+                      <Link to="/pages/home" className="nav-link">Home</Link>
+                    </li>
+                      <li className="nav-item">
+                      <Link to="/pages/contactus" className="nav-link">Contact Us</Link>
+                    </li>
+                  </>
                 )}
               </ul>
               {user &&

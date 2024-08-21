@@ -38,3 +38,38 @@ export const AuthReducersLogin=(async(model:any)=>{
   return dto;
 });
 
+//using fetch
+export const AuthReducersLogin1=(async(model:any)=>{   
+    let dto={
+      role:'',
+      status:true,
+      token:'',
+      userId:0,
+    }  
+
+    const response = await fetch('http://localhost:5271/api/Login/Login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          userName: model.userName,
+          password: model.password,
+      }),
+    });
+
+    if (!response.ok) {    
+      dto.status=false;
+    }
+    else{debugger
+      const data = await response.json();
+      await axios.post(process.env.REACT_APP_BASE_URL+'Login/AuthorizeToken?token='+data.token)
+        .then(async(response) => {    
+          await response.data.map((i:any)=>i.type==='Role'?((setCookie('role',i.value,1,''),dto.role=i.value)):(i.type==='UserId'?(setCookie('userId',i.value,1,''),dto.userId=i.value):console.log("Fetching ...")));
+        });
+        await setCookie('token',data.token,1,'');
+        await setCookie('isLoggedIn',true,1,'');
+        dto.status=true;
+    }   
+    return dto;
+})

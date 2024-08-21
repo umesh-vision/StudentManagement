@@ -65,7 +65,7 @@ export const getStudentById = async (id:number): Promise<studentDTO> => {
   }
 }
 export const getState=async() :Promise<OptionType[]>=>{  
-   const stateList=await axios.get(`${process.env.REACT_APP_BASE_URL}Student/getState?`);
+   const stateList=await axios.get(`${process.env.REACT_APP_BASE_URL}Student/getState`);
    const state: OptionType[] = stateList.data.map((st: any) => ({
       value:st.stateId,
       text:st.stateName
