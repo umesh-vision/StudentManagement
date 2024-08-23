@@ -7,5 +7,4 @@ class Home extends Component<any,any>{
         return("Home")
     }
 }
-
 export default withAuth(withNavigate(Home));

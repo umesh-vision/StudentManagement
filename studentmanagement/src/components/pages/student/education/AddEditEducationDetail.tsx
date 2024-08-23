@@ -12,17 +12,17 @@ type props={
 }
 
 interface studForm{
-form?:any
-index:number
-university:any
-degree:any
-fromDate:any
-toDate:any
-isStudy:any
-percentage:any
-submitted:boolean
-isChecked:boolean
-isComponentEdit:boolean
+  form?:any
+  index:number
+  university:any
+  degree:any
+  fromDate:any
+  toDate:any
+  isStudy:any
+  percentage:any
+  submitted:boolean
+  isChecked:boolean
+  isComponentEdit:boolean
 } 
 
 class AddEditEducationDetail extends Component<props,studForm>{

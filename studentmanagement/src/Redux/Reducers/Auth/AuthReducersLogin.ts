@@ -61,7 +61,7 @@ export const AuthReducersLogin1=(async(model:any)=>{
     if (!response.ok) {    
       dto.status=false;
     }
-    else{debugger
+    else{
       const data = await response.json();
       await axios.post(process.env.REACT_APP_BASE_URL+'Login/AuthorizeToken?token='+data.token)
         .then(async(response) => {    

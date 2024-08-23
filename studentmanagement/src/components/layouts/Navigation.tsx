@@ -148,7 +148,7 @@ class Navigation extends Component<NavbarProps, NavbarState> {
                         style={{ position: 'fixed', top: 55, right: 0 }}                
                       >                    
                         <MenuItem><Link to="/mui/timetable" className="nav-link">Time Table</Link></MenuItem>
-                        <MenuItem  className="btn btn-danger" onClick={this.handleLogout}>Logout</MenuItem>
+                        <MenuItem className="btn btn-danger" onClick={this.handleLogout}>Logout</MenuItem>
                       </Menu>     
                     </>
                   )
@@ -157,9 +157,15 @@ class Navigation extends Component<NavbarProps, NavbarState> {
                     <li className="nav-item">
                       <Link to="/pages/home" className="nav-link">Home</Link>
                     </li>
-                      <li className="nav-item">
+                    <li className="nav-item">
                       <Link to="/pages/contactus" className="nav-link">Contact Us</Link>
-                    </li>
+                    </li>      
+                    <li className="nav-item">
+                      <Link to="/pages/dropzone" className="nav-link">Drop Zone</Link>
+                    </li>   
+                    <li className="nav-item">
+                      <Link to="/pages/animation" className="nav-link">Animation</Link>
+                    </li>             
                   </>
                 )}
               </ul>

@@ -1,4 +1,4 @@
-import { Component } from 'react'
+import { Component, Suspense } from 'react'
 import {Routes,Route, Navigate} from 'react-router-dom';
 import Layout from './components/layouts/Layout';
 import Login from './components/pages/Login';
@@ -24,7 +24,9 @@ import StudentDashboard from './components/MUI/student/StudentDashboard';
 import { Snackbar } from '@material-ui/core';
 import TimeTable from './components/MUI/timetable/TimeTable';
 import ContactUs from './components/pages/ContactUs';
-import "../src/input.css"
+import DropZonePage from './components/pages/DropZonePage';
+import AnimatedCP from './components/MUI/comman/AnimatedCP';
+
 type IProps={ 
   auth:AuthContextProps
 }
@@ -50,12 +52,15 @@ class App extends Component<IProps>{
           onClose={()=>this.props.auth.handleSnack("")}
           message={this.props.auth.state.snackMessage}
         />
-
+        <Suspense fallback={<div>Loading...</div>}>
+  
         <Layout navigation={
-          <Routes>       
-              <Route path='/' element={<Login />} />     
+          <Routes>  
               <Route path='/pages/home' element={<Home />} />
+              <Route path='/' element={<Login />} />
               <Route path='/pages/contactus' element={<ContactUs />}/>
+              <Route path='/pages/dropzone' element={<DropZonePage />}/>
+              <Route path='/pages/animation' element={<AnimatedCP />}/>
               {this.props.auth.state.isAuthenticated?(<Route path="/pages/admin/dashboard" element={<AdminDashboard />}/>):(<Route path="/" element={<Login />} />)} 
               {this.props.auth.state.isAuthenticated?(<Route path="/mui/admin/adminhome" element={<AdminHome />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path="/mui/student/viewstudent" element={<ViewStudent />}/>):(<Route path="/" element={<Login />} />)}
@@ -67,6 +72,7 @@ class App extends Component<IProps>{
               <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         } />
+        </Suspense>
       </>
     );
   }

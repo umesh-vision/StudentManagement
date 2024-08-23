@@ -259,8 +259,7 @@ class StudentDashboard extends Component<Props,IState>{
                     'italic',
                     'underline',
                     'strikethrough',                         
-                    'insertImage'                 
-                
+                    'insertImage'                   
                 ],
                 shouldNotGroupWhenFull: false
             },
@@ -374,16 +373,16 @@ class StudentDashboard extends Component<Props,IState>{
                     </Modal.Body>
                 </Modal> 
                 <div className='col-md-3'>
-                    <label htmlFor='post' className="form-label fw-bold" style={{float:"right",marginTop:"6px"}}>Create Post :</label>                  
+                  <label htmlFor='post' className="form-label fw-bold" style={{float:"right",marginTop:"6px"}}>Create Post :</label>                  
                 </div>
                 <div className='col-md-6'>                           
-                    <input type="text" className='form-control' value={data} onChange={this.onInitialText} />                                          
+                  <input type="text" className='form-control' value={data} onChange={this.onInitialText} />                                          
                 </div>
                 <div className='col-md-3'>
-                    <Button onClick={this.onModel}>Post</Button>                                         
+                  <Button onClick={this.onModel}>Post</Button>                                         
                 </div> 
                 <div className='col-md-12'>
-                    <Post postDtos={postDTO} handleEdit={this.onEdit} handleDelete={this.onDelete} />
+                  <Post postDtos={postDTO} handleEdit={this.onEdit} handleDelete={this.onDelete} />
                 </div> 
               </div>
             </div>

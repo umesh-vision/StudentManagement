@@ -6,8 +6,15 @@ import withNavigate from '../layouts/NavigationExtenstion';
 import { AuthContextProps } from '../../services/IContext';
 import { AuthReducersLogin } from '../../Redux/Reducers/auth/AuthReducersLogin';
 import Validation from '../../utils/validation';
+import { withTranslation } from 'react-i18next';
 
-type LoginProps = { auth:AuthContextProps,  navigate: (path: string) => void;};
+type LoginProps = { 
+  auth:AuthContextProps, 
+  navigate: (path: string) => void;
+  i18n: any; 
+  t: (key: string) => string; 
+};
+
 interface IContext{
   username:any,
   password:any,
@@ -28,35 +35,46 @@ class Login extends Component<LoginProps,IContext>{
   componentDidMount() {
     this.props.auth.logout();
   }
-  
+  changeLanguage = (lng:any) => {debugger
+    const { i18n } = this.props;
+    i18n.changeLanguage(lng); 
+  };
+
   render() {  
+    const { t } = this.props; 
+    
     const { username, password,submitted} = this.state;
     return(  
       <div className='container'>
         <div className='row'>
+          <div className='col-md-12 right'>    
+            <b>Choose Language : &nbsp;</b>
+            <button className="btn btn-success" onClick={() => this.changeLanguage('en')}>EN</button>
+            &nbsp;<button className="btn btn-danger" onClick={() => this.changeLanguage('fr')}>FR</button> 
+          </div>
           <div className='col-md-12'>
-            <h1>Login</h1>    
+            <h1>{t('login')}</h1>        
             <form onSubmit={this.onLogin} id="login" name="login-form">
               <div className="form-group">
-                <label htmlFor='userName'>User Name</label>
+                <label htmlFor='userName'>{t('userName')}</label>
                 <input  
                   type='text'
                   name={"username"}
                   value={username.value}
                   onChange={this.onChange}
-                  placeholder='User Name'
+                  placeholder={t('userName')}
                   className="form-control"                  
                 />     
                 <Validation fieldName='User name' fieldType='string' value={username.value} showValidation={submitted} />             
               </div>          
               <div className="form-group">
-                <label htmlFor='password'>Password</label>
+                <label htmlFor='password'>{t('password')}</label>
                 <input
                   type='password' 
                   name={"password"}
                   value={password.value}
                   onChange={this.onChange}
-                  placeholder='Password'
+                  placeholder={t('password')}
                   className="form-control"                             
                 />
                 <Validation fieldName='Password' fieldType='string' value={password.value} showValidation={submitted} />                       
@@ -65,7 +83,7 @@ class Login extends Component<LoginProps,IContext>{
                 <button className="btn btn-success" >Login</button>
               </div>
             </form>
-          </div>
+          </div>        
         </div>
       </div>
     );
@@ -100,5 +118,5 @@ class Login extends Component<LoginProps,IContext>{
   }
 }
 
-export default withAuth(withNavigate(Login));
+export default withAuth(withNavigate(withTranslation()(Login))); 
 

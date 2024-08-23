@@ -6,14 +6,14 @@ import { getState, getStudentById, getStudentList } from '../../../Redux/Reducer
 import withNavigate from '../../layouts/NavigationExtenstion';
 import withAuth from '../../../context/AuthContextExtenstion';
 import { AdminState, StudentState } from '../../../services/IComman';
-
-import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Tooltip } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import { StudentModel } from '../student/AddStudent';
+import { CustomTooltip } from '../comman/CustomTooltip';
 
 type Props = {
     auth:AuthContextProps,
@@ -184,12 +184,16 @@ class AdminDashboard extends Component<Props,AdminState>{
                     <div className='col-md-12'>                      
                         <StudentModel studentState={this.state.studentState} handleClose={this.onClose} isEdit={this.state.isEdit} />
                         <div style={{height:"261px", width:"100%"}}>
-                            <div style={{paddingTop:"5px"}}>  
-                                <Tooltip title="Add Student"> 
-                                    <Button className="btn btn-primary" onClick={this.onAdd}>
-                                      <PersonAddIcon />
-                                    </Button>
-                                </Tooltip>
+                            <div style={{paddingTop:"5px"}}>                                  
+                                <CustomTooltip 
+                                    option={<Button className="btn btn-primary" onClick={this.onAdd}>
+                                        <PersonAddIcon />
+                                    </Button>}
+                                    possition={'buttom'}
+                                    setTitle={'Add Student'} st={{
+                                        color: 'white',
+                                        bgcolor: 'green'
+                                    }}                                />
                                 <TextField                              
                                     onChange={this.onSearch}     
                                     placeholder='Search here ...'
@@ -231,27 +235,39 @@ class AdminDashboard extends Component<Props,AdminState>{
                                                         <TableCell>{student.state}</TableCell>
                                                         <TableCell>{student.pincode}</TableCell>
                                                         <TableCell>
-                                                            <Tooltip title="View">
-                                                                <button className="btn btn-sm"
-                                                                   onClick={()=>this.onView(student.studentId)}
+                                                        <CustomTooltip 
+                                                                option={<button className="btn btn-sm"
+                                                                    onClick={() => this.onView(student.studentId)}
                                                                 >
-                                                                   <VisibilityIcon color="primary" style={{ width:"30px", height:"25px"}} />     
-                                                                </button>
-                                                            </Tooltip>
-                                                            <Tooltip title="Edit">
-                                                                <button className="btn btn-sm"
-                                                                  onClick={()=>this.onEdit(student.studentId)}
+                                                                    <VisibilityIcon color="primary" style={{ width: "30px", height: "25px" }} />
+                                                                </button>}
+                                                                possition={'top'}
+                                                                setTitle={'View'} st={{
+                                                                    color: 'black',
+                                                                    bgcolor: 'yellow'
+                                                                }}                                                        />
+                                                        <CustomTooltip 
+                                                                option={<button className="btn btn-sm"
+                                                                    onClick={() => this.onEdit(student.studentId)}
                                                                 >
-                                                                  <EditIcon style={{color:'orange', width:"30px", height:"25px"}} />     
-                                                                </button>    
-                                                            </Tooltip>                                                                                                   
-                                                            <Tooltip title="Delete">
-                                                                <button className="btn btn-sm"
-                                                                  onClick={()=>this.onDelete(student.studentId)}
-                                                                >                                                                 
-                                                                  <DeleteIcon style={{color:'red', width:"30px", height:"25px"}} />     
-                                                                </button>     
-                                                            </Tooltip>                                  
+                                                                    <EditIcon style={{ color: 'orange', width: "30px", height: "25px" }} />
+                                                                </button>}
+                                                                possition={'left'}
+                                                                setTitle={'Edit'} st={{
+                                                                    color: 'blue',
+                                                                    bgcolor: 'white'
+                                                                }}                                                        />    
+                                                        <CustomTooltip 
+                                                                option={<button className="btn btn-sm"
+                                                                    onClick={() => this.onDelete(student.studentId)}
+                                                                >
+                                                                    <DeleteIcon style={{ color: 'red', width: "30px", height: "25px" }} />
+                                                                </button>}
+                                                                possition={'right'}
+                                                                setTitle={'Delete'} st={{
+                                                                    color: 'red',
+                                                                    bgcolor: 'white'
+                                                                }}                                                        />                                  
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}                                                                  

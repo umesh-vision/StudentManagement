@@ -24,5 +24,5 @@ export interface AuthContextProps {
   handleSnack:(snackMessage:string)=>void;
   login: (username: string, role: string,token:string,userId:number) => void;
   logout: () => void;
-  setProfile:(state:any)=>void;
+  setProfile:(state:any)=>void;  
 }
