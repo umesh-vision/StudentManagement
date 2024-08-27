@@ -60,7 +60,6 @@ class App extends Component<IProps>{
               <Route path='/' element={<Login />} />
               <Route path='/pages/contactus' element={<ContactUs />}/>
               <Route path='/pages/dropzone' element={<DropZonePage />}/>
-              <Route path='/pages/animation' element={<AnimatedCP />}/>
               {this.props.auth.state.isAuthenticated?(<Route path="/pages/admin/dashboard" element={<AdminDashboard />}/>):(<Route path="/" element={<Login />} />)} 
               {this.props.auth.state.isAuthenticated?(<Route path="/mui/admin/adminhome" element={<AdminHome />}/>):(<Route path="/" element={<Login />} />)}
               {this.props.auth.state.isAuthenticated?(<Route path="/mui/student/viewstudent" element={<ViewStudent />}/>):(<Route path="/" element={<Login />} />)}

@@ -162,10 +162,7 @@ class Navigation extends Component<NavbarProps, NavbarState> {
                     </li>      
                     <li className="nav-item">
                       <Link to="/pages/dropzone" className="nav-link">Drop Zone</Link>
-                    </li>   
-                    <li className="nav-item">
-                      <Link to="/pages/animation" className="nav-link">Animation</Link>
-                    </li>             
+                    </li>            
                   </>
                 )}
               </ul>

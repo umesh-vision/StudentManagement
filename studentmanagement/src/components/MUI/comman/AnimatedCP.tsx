@@ -1,33 +1,34 @@
 import { Component } from "react";
 import styled, { keyframes } from 'styled-components';
-import { bounce } from 'react-animations';
+import { bounce,slideInLeft } from 'react-animations';
+import preset from 'jss-preset-default'
+import jss from 'jss'
 
-const BounceAnimation = keyframes`${bounce}`;
+const BounceAnimation = keyframes`${slideInLeft}`;
+jss.setup(preset())
+ 
+const {classes} = jss.createStyleSheet({
+  '@keyframes bounce': bounce,
+  bounce: {
+    animationName: bounce,
+    animationDuration: '3s',
+  },
+}).attach()
 
-// Create styled components with the animation
 const BouncyDiv = styled.div`
-  animation: 2s ${BounceAnimation};
+  animation: 1s ${BounceAnimation};
 `;
 
-const AnimatedButton = styled.button`
-  animation: 2s ${BounceAnimation};
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-`;
+type ToolProps = {
+  element: any;
+};
 
-class AnimatedCP extends Component<any, any> {
+class AnimatedCP extends Component<ToolProps, any> {
   render() {
-    return (
-       <div style={{ textAlign: 'center', marginTop: '50px' }}>
+    return (  
         <BouncyDiv>
-          <h1>Bouncing Text!</h1>
+          {this.props.element}
         </BouncyDiv>
-        <AnimatedButton>Bounce Button</AnimatedButton>
-      </div>
     );
   }
 }

@@ -7,6 +7,7 @@ import { AuthContextProps } from '../../services/IContext';
 import { AuthReducersLogin } from '../../Redux/Reducers/auth/AuthReducersLogin';
 import Validation from '../../utils/validation';
 import { withTranslation } from 'react-i18next';
+import AnimatedCP from '../MUI/comman/AnimatedCP';
 
 type LoginProps = { 
   auth:AuthContextProps, 
@@ -45,6 +46,7 @@ class Login extends Component<LoginProps,IContext>{
     
     const { username, password,submitted} = this.state;
     return(  
+      <AnimatedCP element={
       <div className='container'>
         <div className='row'>
           <div className='col-md-12 right'>    
@@ -85,7 +87,8 @@ class Login extends Component<LoginProps,IContext>{
             </form>
           </div>        
         </div>
-      </div>
+      </div>}
+      />
     );
   }
   
